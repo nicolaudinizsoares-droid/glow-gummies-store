@@ -1,7 +1,8 @@
 // Website Layout Components for Glow
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import {
   User,
   Search,
   Menu,
+  X,
   Instagram,
   Facebook,
   Twitter,
@@ -22,6 +24,27 @@ import { GlowLogo } from "@/components/glow-logo";
 // Navigation Component
 export const Navigation = () => {
   const { itemCount, toggleCart } = useCart();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Don't let the page scroll behind the open mobile menu.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
+
+  // Close on Escape, matching the cart sidebar's behaviour.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
 
   const navItems = [
     { name: "Products", href: "/products" },
@@ -125,12 +148,59 @@ export const Navigation = () => {
               variant="ghost"
               size="sm"
               className="md:hidden glass-subtle hover:glass rounded-full"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-nav"
             >
-              <Menu className="w-4 h-4" />
+              {mobileOpen ? (
+                <X className="w-4 h-4" />
+              ) : (
+                <Menu className="w-4 h-4" />
+              )}
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Mobile navigation drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            id="mobile-nav"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden border-t"
+            style={{
+              borderColor: colors.brand.creamPale,
+              backgroundColor: colors.brand.offWhite,
+            }}
+          >
+            <ul className="px-4 py-3">
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 py-3 text-base font-medium"
+                    style={{ color: colors.text.primary }}
+                  >
+                    <span
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{
+                        backgroundColor: item.accent ?? colors.brand.apricot,
+                      }}
+                    />
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
