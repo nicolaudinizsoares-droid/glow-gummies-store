@@ -1,9 +1,9 @@
-// Glow brand mark: script wordmark + four-point sparkle.
+// Glow brand mark.
 //
-// The sparkle is drawn as SVG so it stays crisp at any size and can be
-// recolored. The wordmark currently renders in Pacifico as a stand-in for the
-// real hand-lettered logotype -- drop the artwork at /public/brand/glow-logo.svg
-// and set `asset` to true to use it instead.
+// The wordmark is the real logo artwork at /public/brand/glow-logo.png, lifted
+// off its gradient ground so it sits on any background. GlowSparkle remains as
+// SVG for the places that need just the mark -- benefit icons, dividers --
+// where a recolourable vector beats a bitmap.
 
 import Image from "next/image";
 import { colors } from "@/styles/colors";
@@ -33,7 +33,7 @@ interface GlowLogoProps {
   /** Wordmark height in px. The sparkle scales from this. */
   size?: number;
   color?: string;
-  /** Render /public/brand/glow-logo.svg instead of the font stand-in. */
+  /** Set false to fall back to the Pacifico stand-in. */
   asset?: boolean;
   className?: string;
 }
@@ -41,15 +41,18 @@ interface GlowLogoProps {
 export const GlowLogo = ({
   size = 32,
   color = colors.brand.navy,
-  asset = false,
+  asset = true,
   className = "",
 }: GlowLogoProps) => {
   if (asset) {
+    // The mark is 892x483; height drives the box and width follows. The full
+    // lockup with the tagline lives at /brand/glow-logo.png for marketing
+    // surfaces where it is rendered large enough to read.
     return (
       <Image
-        src="/brand/glow-logo.svg"
+        src="/brand/glow-logo-mark.png"
         alt="Glow"
-        width={Math.round(size * 3.2)}
+        width={Math.round(size * (892 / 483))}
         height={size}
         className={className}
         priority

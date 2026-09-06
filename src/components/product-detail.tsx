@@ -25,7 +25,7 @@ import { semantic } from "@/styles/tokens";
 const GALLERY = [
   { src: PRODUCT_ASSETS.bottle, label: "Bottle" },
   { src: PRODUCT_ASSETS.bottleBody, label: "Open" },
-  { src: PRODUCT_ASSETS.poster, label: "Details" },
+  { src: PRODUCT_ASSETS.lifestyle, label: "Passion fruit" },
 ];
 
 export const ProductDetail = ({ slug }: { slug: string }) => {
