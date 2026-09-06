@@ -29,9 +29,10 @@ export const Hero = () => {
     const stage = scope.querySelector<HTMLElement>("[data-stage]");
     const cap = scope.querySelector<HTMLElement>("[data-cap]");
     const body = scope.querySelector<HTMLElement>("[data-bottle]");
+    const product = scope.querySelector<HTMLElement>("[data-product]");
     const gummies = gsap.utils.toArray<HTMLElement>("[data-gummy]", scope);
     const copy = gsap.utils.toArray<HTMLElement>("[data-copy]", scope);
-    if (!stage || !cap || !body) return;
+    if (!stage || !cap || !body || !product) return;
 
     const timeline = gsap.timeline({
       defaults: { ease: motionTokens.ease.cinematic },
@@ -54,7 +55,7 @@ export const Hero = () => {
     timeline
       // Camera push-in.
       .fromTo(
-        [body, cap],
+        product,
         { scale: 0.92, yPercent: 4 },
         { scale: 1, yPercent: 0, duration: 2 },
         0
@@ -62,8 +63,8 @@ export const Hero = () => {
       // Cap twists free and lifts clear.
       .fromTo(
         cap,
-        { y: 62, rotate: 12 },
-        { y: 0, rotate: 0, duration: 3 },
+        { yPercent: 104, rotate: 14 },
+        { yPercent: 0, rotate: 0, duration: 3 },
         2
       )
       // Gummies rise out of the open bottle on staggered paths.
@@ -104,13 +105,13 @@ export const Hero = () => {
         }}
       >
         {/* Product stage: upper area, clear of the copy block below. */}
-        <div className="absolute inset-x-0 top-0 h-[62%] md:h-[66%] flex items-end justify-center pb-2">
+        <div className="absolute inset-x-0 top-16 md:top-20 bottom-[36%] md:bottom-[34%] flex items-center justify-center pt-14 md:pt-16">
           {/* Gummies rising. Behind the bottle so they read as coming from it. */}
           <div className="absolute inset-0 pointer-events-none">
             {[
-              { left: "41%", top: "30%", size: 40, rotate: -14 },
-              { left: "56%", top: "22%", size: 32, rotate: 22 },
-              { left: "49%", top: "12%", size: 26, rotate: -6 },
+              { left: "39%", top: "26%", size: 54, rotate: -14 },
+              { left: "57%", top: "17%", size: 44, rotate: 22 },
+              { left: "48%", top: "7%", size: 36, rotate: -6 },
             ].map((g, i) => (
               <div
                 key={i}
@@ -139,14 +140,18 @@ export const Hero = () => {
 
           {/* Bottle, with the cap anchored to its own neck so the two stay
               related at any viewport width. */}
-          <div className="relative" style={{ width: "clamp(130px, 16vw, 210px)" }}>
+          <div
+            data-product
+            className="relative"
+            style={{ width: "clamp(155px, 19vw, 260px)" }}
+          >
             {/* Cap: resting position is lifted clear and tilted. */}
             <div
               className="absolute left-1/2 z-10"
               style={{
-                width: "52%",
-                top: "-15%",
-                transform: "translateX(-50%) translateY(-14%) rotate(-12deg)",
+                width: "49%",
+                top: "-13%",
+                transform: "translateX(-50%) rotate(-13deg)",
               }}
             >
               <div data-cap>
