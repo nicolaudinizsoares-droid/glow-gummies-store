@@ -20,4 +20,6 @@ export const PRODUCT_ASSETS = {
   ],
   /** Bottle with passion fruit, for the flavour section. */
   lifestyle: "/products/glow-lifestyle.png",
+  /** Marketing poster, corrected: no vegetarian claim, two gummies a day. */
+  poster: "/products/glow-poster.png",
 } as const;

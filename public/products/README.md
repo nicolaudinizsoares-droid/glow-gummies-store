@@ -20,3 +20,19 @@ Requirements:
 
 The cap and body shots are what make the bottle-opening sequence possible.
 Without them the hero falls back to a single static bottle.
+
+## Generated artwork
+
+`glow-bottle.png`, `glow-bottle-body.png`, `glow-cap.png`, `glow-gummy-*.png`
+and `glow-poster.png` are vector recreations built from the label design, not
+photography. Replace them with real product shots when you have them; the
+filenames and proportions are already correct, so no code changes are needed.
+
+`glow-poster.png` is a corrected marketing poster. It differs from the original
+in two ways that matter:
+
+- No "Vegetarian Friendly" claim. The Supplement Facts panel lists Collagen
+  (piscine) and declares Contains: Fish (Tilapia).
+- "Two gummies a day", matching the panel's serving size, rather than "one".
+
+It also carries the allergen line and the FDA disclaimer.
