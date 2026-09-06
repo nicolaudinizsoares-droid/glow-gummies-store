@@ -16,13 +16,15 @@ export const FinalCta = () => (
   >
     <Reveal className="relative max-w-3xl mx-auto text-center" stagger>
       <div data-reveal-item className="mb-10">
-        <ProductImage
-          src={PRODUCT_ASSETS.bottle}
-          alt={product.name}
-          width={760}
-          height={1470}
-          className="w-full max-w-[190px] mx-auto h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-        />
+        <div className="relative aspect-[4/5] w-full max-w-[260px] mx-auto overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.45)]">
+          <ProductImage
+            src={PRODUCT_ASSETS.photos.open}
+            alt={product.name}
+            width={1200}
+            height={1500}
+            className="h-full w-full object-cover"
+          />
+        </div>
       </div>
       <h2
         data-reveal-item

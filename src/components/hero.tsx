@@ -15,7 +15,6 @@
 // cap-and-body layers are gone: they only existed so the cap could lift away.
 
 import Link from "next/link";
-import Image from "next/image";
 import type { CSSProperties } from "react";
 
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
@@ -48,24 +47,34 @@ export const Hero = () => {
     >
       {/* Photograph. Second in the source order so the headline is what a
           screen reader and a search engine reach first, but painted first on
-          mobile via order-1. */}
-      <div className="relative order-1 lg:order-2 aspect-[6/5] lg:aspect-auto lg:min-h-[calc(100vh-5rem)]">
-        <Image
-          src={PRODUCT_ASSETS.heroMobile}
-          alt="A bottle of Glow Hair, Skin & Nails gummies on marble, beside a halved passion fruit"
-          fill
-          sizes="100vw"
-          priority
-          className="object-cover lg:hidden"
-        />
-        <Image
-          src={PRODUCT_ASSETS.hero}
-          alt=""
-          fill
-          sizes="50vw"
-          priority
-          className="object-cover hidden lg:block"
-        />
+          mobile via order-1.
+
+          Two beats shot on the same set dissolve into one another under a slow
+          push-in -- see .hero-frame in globals.css. Plain <picture> rather than
+          next/image because the two crops are art direction, not resolutions:
+          a CSS-hidden <img> still downloads, so the next/image version fetched
+          both the tall and the wide crop on every device. With media on the
+          <source>, each device fetches one. */}
+      <div className="hero-frame relative order-1 lg:order-2 aspect-[6/5] lg:aspect-auto lg:min-h-[calc(100vh-5rem)] overflow-hidden">
+        <picture>
+          <source media="(min-width: 1024px)" srcSet={PRODUCT_ASSETS.hero} />
+          <img
+            src={PRODUCT_ASSETS.heroMobile}
+            alt="A bottle of Glow Hair, Skin & Nails gummies on marble, beside a halved passion fruit"
+            fetchPriority="high"
+            className="hero-beat-a absolute inset-0 h-full w-full object-cover"
+          />
+        </picture>
+        <picture>
+          <source media="(min-width: 1024px)" srcSet={PRODUCT_ASSETS.hero2} />
+          <img
+            src={PRODUCT_ASSETS.hero2Mobile}
+            alt=""
+            aria-hidden="true"
+            fetchPriority="low"
+            className="hero-beat-b absolute inset-0 h-full w-full object-cover"
+          />
+        </picture>
       </div>
 
       {/* Copy */}

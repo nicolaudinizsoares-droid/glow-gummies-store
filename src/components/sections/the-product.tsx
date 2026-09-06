@@ -93,13 +93,15 @@ export const TheProduct = () => (
       </Reveal>
 
       <Reveal className="order-1 md:order-2" distance={40}>
-        <ProductImage
-          src={PRODUCT_ASSETS.bottle}
-          alt={`${product.name}, ${product.flavor}`}
-          width={760}
-          height={1470}
-          className="w-full max-w-[290px] mx-auto h-auto drop-shadow-[0_30px_50px_rgba(10,29,54,0.14)]"
-        />
+        <div className="relative aspect-[4/5] w-full max-w-[440px] mx-auto overflow-hidden">
+          <ProductImage
+            src={PRODUCT_ASSETS.photos.hand}
+            alt={`${product.name}, ${product.flavor}`}
+            width={1200}
+            height={1500}
+            className="h-full w-full object-cover"
+          />
+        </div>
       </Reveal>
     </div>
   </section>

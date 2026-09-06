@@ -46,13 +46,16 @@ export const metadata: Metadata = {
     title: "Glow — Be Ready to Glow",
     description: DESCRIPTION,
     url: SITE_URL,
-    images: [{ url: "/products/glow-poster.png", width: 2048, height: 3072, alt: "Glow Hair, Skin & Nails gummies" }],
+    // 1200x630. summary_large_image and every chat unfurl letterbox to
+    // roughly 1.91:1; the portrait poster this replaced was cropped through
+    // the middle, losing the headline and most of the bottle.
+    images: [{ url: "/products/glow-og.jpg", width: 1200, height: 630, alt: "Glow Hair, Skin & Nails gummies beside a halved passion fruit" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Glow — Be Ready to Glow",
     description: DESCRIPTION,
-    images: ["/products/glow-poster.png"],
+    images: ["/products/glow-og.jpg"],
   },
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },

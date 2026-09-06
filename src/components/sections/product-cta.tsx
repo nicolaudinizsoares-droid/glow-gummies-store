@@ -19,13 +19,15 @@ export const ProductCta = () => {
     <section className="px-6 md:px-8 py-24 md:py-32">
       <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-12 items-center">
         <Reveal distance={36}>
-          <ProductImage
-            src={PRODUCT_ASSETS.bottle}
-            alt={product.name}
-            width={760}
-            height={1470}
-            className="w-full max-w-[215px] mx-auto h-auto drop-shadow-[0_24px_40px_rgba(10,29,54,0.14)]"
-          />
+          <div className="relative aspect-[4/5] w-full max-w-[360px] mx-auto overflow-hidden">
+            <ProductImage
+              src={PRODUCT_ASSETS.photos.fruit}
+              alt={product.name}
+              width={1200}
+              height={1500}
+              className="h-full w-full object-cover"
+            />
+          </div>
         </Reveal>
 
         <Reveal stagger>

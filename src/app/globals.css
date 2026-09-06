@@ -240,6 +240,91 @@
  * this catches CSS transitions and any animation added later.
  */
 /*
+ * Hero motion.
+ *
+ * A slow push-in on the frame, and a long dissolve between two frames shot on
+ * the same set -- closed bottle to open bottle -- so the hero reads as a held
+ * camera rather than a slideshow. Done in CSS rather than as a video file: the
+ * source is photographs, so a video would only ever be this same camera move,
+ * except re-encoded, several times the weight, and resolution-locked.
+ *
+ * The push sits on the frame and the dissolve on the two layers inside it, so
+ * both beats are always at the same scale and the cross-fade cannot jump.
+ */
+.hero-frame > * {
+  animation: hero-push 24s ease-in-out infinite;
+}
+
+.hero-beat-a {
+  animation: hero-push 24s ease-in-out infinite,
+    hero-fade-a 24s ease-in-out infinite;
+}
+
+.hero-beat-b {
+  opacity: 0;
+  animation: hero-push 24s ease-in-out infinite,
+    hero-fade-b 24s ease-in-out infinite;
+}
+
+@keyframes hero-push {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.055);
+  }
+}
+
+@keyframes hero-fade-a {
+  0%,
+  40% {
+    opacity: 1;
+  }
+  50%,
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-fade-b {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  50%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/*
+ * Reduced motion: hold the first frame, still and fully opaque. The blanket
+ * rule further down collapses duration but not delay or iteration timing, and
+ * a collapsed infinite fade would leave whichever beat it landed on.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .hero-frame > *,
+  .hero-beat-a,
+  .hero-beat-b {
+    animation: none;
+    transform: none;
+  }
+  .hero-beat-a {
+    opacity: 1;
+  }
+  .hero-beat-b {
+    opacity: 0;
+  }
+}
+
+/*
  * Hero entrance.
  *
  * In CSS, not JavaScript, so it runs on the first paint. A JS-driven entrance

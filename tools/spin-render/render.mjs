@@ -35,10 +35,10 @@ ${css}
 </div>
 </body>`;
 
+// Only the gummy cut-outs are still drawn. The bottle and cap renders they
+// used to sit beside are gone: the site shows photographs of the real bottle
+// now, and a modelled one next to them looked exactly like what it was.
 const jobs = [
-  ['glow-cap.png',         cap(),         620, 296],
-  ['glow-bottle-body.png', bottle(false), 760, 1470],
-  ['glow-bottle.png',      bottle(true),  760, 1470],
   ['glow-gummy-1.png',     gummy(0),      140, 140],
   ['glow-gummy-2.png',     gummy(1),      140, 140],
   ['glow-gummy-3.png',     gummy(2),      140, 140],

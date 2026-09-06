@@ -9,8 +9,6 @@
 // lifted the cap off the bottle; nothing composites the product any more.
 
 export const PRODUCT_ASSETS = {
-  /** Whole bottle, straight on, cap attached. The default product shot. */
-  bottle: "/products/glow-bottle.png",
   /** Single gummies, cut out, for the emerge sequence. */
   gummies: [
     "/products/glow-gummy-1.png",
@@ -24,6 +22,9 @@ export const PRODUCT_ASSETS = {
    */
   hero: "/products/glow-hero.jpg",
   heroMobile: "/products/glow-hero-mobile.jpg",
+  /** Second beat of the hero's dissolve: same set, cap off, gummies spilled. */
+  hero2: "/products/glow-hero-2.jpg",
+  hero2Mobile: "/products/glow-hero-2-mobile.jpg",
   /**
    * Finished product photography, for the gallery. Unlike the layers above
    * these keep their own backgrounds -- they are shot, not composited -- and
@@ -39,6 +40,6 @@ export const PRODUCT_ASSETS = {
     /** Skin close-up. No product in frame. */
     skin: "/products/glow-photo-skin.jpg",
   },
-  /** Marketing poster, corrected: no vegetarian claim, two gummies a day. */
-  poster: "/products/glow-poster.png",
+  /** 1200x630 social share card. Built by tools/spin-render/og-card.mjs. */
+  og: "/products/glow-og.jpg",
 } as const;
