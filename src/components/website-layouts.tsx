@@ -1,4 +1,4 @@
-// Website Layout Components for Tso
+// Website Layout Components for Glow
 "use client";
 
 import { motion } from "framer-motion";
@@ -17,6 +17,7 @@ import {
 import { colors } from "@/styles/colors";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
+import { GlowLogo } from "@/components/glow-logo";
 
 // Navigation Component
 export const Navigation = () => {
@@ -57,19 +58,8 @@ export const Navigation = () => {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center space-x-2"
           >
-            <Link href="/" className="flex items-center space-x-2">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center glass-button floating-element"
-                style={{ backgroundColor: colors.brand.goldenDawn + "80" }}
-              >
-                <span className="text-white font-bold text-lg">T</span>
-              </div>
-              <span
-                className="text-2xl font-bold"
-                style={{ color: colors.text.primary }}
-              >
-                Tso
-              </span>
+            <Link href="/" className="flex items-center" aria-label="Glow home">
+              <GlowLogo size={30} />
             </Link>
           </motion.div>
 
@@ -153,19 +143,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center glass-button floating-element"
-                style={{ backgroundColor: colors.brand.goldenDawn + "80" }}
-              >
-                <span className="text-white font-bold">T</span>
-              </div>
-              <span
-                className="text-xl font-bold"
-                style={{ color: colors.text.primary }}
-              >
-                Tso
-              </span>
+            <div className="flex items-center">
+              <GlowLogo size={26} />
             </div>
             <p className="text-gray-600 text-sm">
               Science meets nature in our carefully curated skincare collection.
@@ -296,7 +275,7 @@ export const Footer = () => {
           style={{ borderColor: colors.brand.glacialBlue + "40" }}
         >
           <p className="text-sm text-gray-600 mb-4 md:mb-0">
-            © 2025 Tso. All rights reserved.
+            © 2025 Glow. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm text-gray-600">
             <a href="#" className="hover:opacity-75">
@@ -345,7 +324,7 @@ export const ProductDetailLayout = ({ category }: ProductDetailProps) => {
                   className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center"
                   style={{ backgroundColor: categoryColors.primary }}
                 >
-                  <span className="text-white text-2xl font-bold">TSO</span>
+                  <span className="text-white text-2xl font-bold">Glow</span>
                 </div>
                 <p className="text-gray-600">Product Image</p>
               </div>
@@ -520,7 +499,7 @@ export const CategoryPageLayout = ({
                       className="w-16 h-16 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: categoryColors.primary }}
                     >
-                      <span className="text-white font-bold">TSO</span>
+                      <span className="text-white font-bold">Glow</span>
                     </div>
                   </div>
                   <CardContent className="p-4">

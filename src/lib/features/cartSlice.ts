@@ -23,7 +23,7 @@ interface CartState {
 const loadCartFromStorage = (): CartState => {
   if (typeof window !== 'undefined') {
     try {
-      const savedCart = localStorage.getItem('tso-cart')
+      const savedCart = localStorage.getItem('glow-cart')
       if (savedCart) {
         const parsed = JSON.parse(savedCart)
         return {
@@ -49,7 +49,7 @@ const loadCartFromStorage = (): CartState => {
 const saveCartToStorage = (state: CartState) => {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem('tso-cart', JSON.stringify({
+      localStorage.setItem('glow-cart', JSON.stringify({
         items: state.items,
         total: state.total,
         itemCount: state.itemCount

@@ -38,11 +38,11 @@ export default function AboutPage() {
               className="text-5xl font-bold mb-6"
               style={{ color: colors.text.primary }}
             >
-              About Tso
+              About Glow
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Born from a passion for natural beauty and sustainable skincare,
-              Tso combines traditional botanicals with modern science to create
+              Glow combines traditional botanicals with modern science to create
               products that nurture both your skin and the planet.
             </p>
           </motion.div>
@@ -65,7 +65,7 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  Founded in 2020, Tso emerged from a simple belief: that
+                  Founded in 2020, Glow emerged from a simple belief: that
                   effective skincare shouldn't come at the cost of our planet's
                   wellbeing. Our founder, inspired by traditional Ayurvedic
                   practices and modern dermatological research, set out to
@@ -79,7 +79,7 @@ export default function AboutPage() {
                   responsibility.
                 </p>
                 <p>
-                  Today, Tso is trusted by thousands of customers who share our
+                  Today, Glow is trusted by thousands of customers who share our
                   vision of clean, effective, and consciously crafted skincare.
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default function AboutPage() {
                 className="aspect-square rounded-lg shadow-2xl flex items-center justify-center text-6xl font-bold text-white"
                 style={{ backgroundColor: colors.products.cleanser.primary }}
               >
-                TSO
+                Glow
               </div>
             </motion.div>
           </div>
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  At Tso, we promise to deliver products that are not only
+                  At Glow, we promise to deliver products that are not only
                   effective but also safe, sustainable, and thoughtfully
                   crafted. We believe that great skincare should enhance your
                   natural beauty while respecting the environment.

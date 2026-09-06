@@ -468,7 +468,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 <div
                   className="mb-6 p-5 rounded-2xl border-0"
                   style={{
-                    background: `linear-gradient(135deg, ${colors.semantic.info}10, ${colors.semantic.purple}10)`,
+                    background: `linear-gradient(135deg, ${colors.semantic.info}10, ${colors.brand.blush}10)`,
                     boxShadow: colors.elevation.card,
                   }}
                 >
@@ -529,7 +529,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                               border: `2px solid ${
                                 isSelected
                                   ? productColors.primary
-                                  : colors.text.secondary5
+                                  : colors.text.secondary
                               }`,
                               backgroundColor: isSelected
                                 ? `${productColors.primary}08`

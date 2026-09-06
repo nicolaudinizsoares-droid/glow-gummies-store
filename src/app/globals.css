@@ -3,19 +3,27 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tso Color System */
+/* Glow Color System */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+  --font-script: var(--font-pacifico);
   --font-mono: var(--font-geist-mono);
-  
-  /* Tso Brand Colors */
-  --tso-soft-sand-beige: #F4EDE4;
-  --tso-off-white: #FAFAFA;
-  --tso-charcoal-grey: #2E2E2E;
-  --tso-turmeric-gold: #E6A600;
-  --tso-misty-blue: #A8C6D7;
+
+  /* Glow Brand Colors - from the label and logo */
+  --glow-navy: #0F2A4C;
+  --glow-navy-light: #1B4272;
+  --glow-cream: #F3E2CE;
+  --glow-cream-pale: #F7E8D5;
+  --glow-off-white: #FDF9F3;
+  --glow-apricot: #F0A868;
+  --glow-peach: #F8BE8A;
+  --glow-blush: #E0A093;
+  --glow-blush-pale: #F5E1DB;
+  --glow-berry: #C9202F;
+  --glow-gray: #6B7280;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -127,12 +135,12 @@
   body {
     @apply bg-background text-foreground;
     /* Glassmorphism background */
-    background: linear-gradient(135deg, 
-      var(--tso-soft-sand-beige) 0%, 
-      var(--tso-off-white) 25%, 
-      var(--tso-misty-blue) 50%, 
-      var(--tso-soft-sand-beige) 75%, 
-      var(--tso-off-white) 100%);
+    background: linear-gradient(135deg,
+      var(--glow-off-white) 0%,
+      var(--glow-cream-pale) 25%,
+      var(--glow-blush-pale) 50%,
+      var(--glow-cream-pale) 75%,
+      var(--glow-off-white) 100%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
   }

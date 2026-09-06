@@ -1,4 +1,4 @@
-// Tso Product Components
+// Glow Product Components
 "use client";
 
 import { motion } from "framer-motion";
@@ -432,10 +432,10 @@ const HeroSection = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-xl md:text-2xl mb-8 text-white/90 leading-relaxed max-w-2xl mx-auto md:mx-0"
             >
-              At TSO, we bring together the untouched serenity of Ladakh's Tso
-              Moriri Lake and the strength of modern dermatology. Each product
-              is crafted to honor your skin's natural rhythm — calm,
-              transparent, and enduringly strong.
+              At Glow, we bring together the untouched serenity of
+              high-altitude Himalayan lakes and the strength of modern
+              dermatology. Each product is crafted to honor your skin's natural
+              rhythm — calm, transparent, and enduringly strong.
             </motion.p>
 
             {/* Hero Search Bar */}
@@ -642,8 +642,8 @@ const CategoriesSection = () => {
   );
 };
 
-// Main Tso Demo Component
-export default function TsoSkincareDemo() {
+// Main Glow Homepage Component
+export default function GlowHome() {
   const featuredProducts = getFeaturedProducts(6);
 
   return (
@@ -819,7 +819,7 @@ const BrandPhilosophySection = () => {
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             From the golden dawns over Ladakh to the depth of its tranquil
-            lakes, TSO is inspired by nature's quiet resilience. Our philosophy
+            lakes, Glow is inspired by nature's quiet resilience. Our philosophy
             is rooted in:
           </p>
         </motion.div>
@@ -899,7 +899,7 @@ const TrustSection = () => {
       icon: Globe,
       title: "Light Footprint",
       description:
-        "Just as Tso Moriri stands untouched, we believe in leaving a light footprint",
+        "Just as a high mountain lake stands untouched, we believe in leaving a light footprint",
       color: colors.brand.glacialBlue,
     },
   ];

@@ -1,5 +1,5 @@
-import TsoSkincareDemo from "@/components/tso-skincare-demo";
+import GlowHome from "@/components/glow-home";
 
 export default function Home() {
-  return <TsoSkincareDemo />;
+  return <GlowHome />;
 }
