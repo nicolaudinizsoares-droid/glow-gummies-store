@@ -47,27 +47,9 @@ export const Navigation = () => {
   }, [mobileOpen]);
 
   const navItems = [
-    { name: "Products", href: "/products" },
-    {
-      name: "Cleanser",
-      href: "/categories/cleanser",
-      accent: colors.products.cleanser.primary,
-    },
-    {
-      name: "Serum",
-      href: "/categories/serum",
-      accent: colors.products.serum.primary,
-    },
-    {
-      name: "Moisturizer",
-      href: "/categories/moisturizer",
-      accent: colors.products.moisturizer.primary,
-    },
-    {
-      name: "Sunscreen",
-      href: "/categories/sunscreen",
-      accent: colors.products.sunscreen.primary,
-    },
+    { name: "Shop", href: "/products", accent: colors.brand.apricot },
+    { name: "Benefits", href: "/#benefits", accent: colors.brand.blush },
+    { name: "How to take it", href: "/#how-to-take-it", accent: colors.brand.peach },
     { name: "About", href: "/about" },
   ];
 

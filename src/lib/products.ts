@@ -39,6 +39,28 @@ export interface Product {
   }
   format: string
   size: string
+  /** Flavour of the gummy, e.g. "Passion Fruit". */
+  flavor: string
+  /** Net weight as printed on the label, e.g. "10.1 oz (286 g)". */
+  net_weight: string
+  serving: {
+    size: string
+    per_container: number
+    directions: string
+  }
+  /**
+   * Supplement Facts panel rows. Empty until the real values are taken from
+   * the printed label -- dosages are never inferred.
+   */
+  supplement_facts: {
+    name: string
+    amount: string
+    daily_value: string | null
+  }[]
+  /** Label claims such as "Non-GMO", "Gluten Free". */
+  dietary_badges: string[]
+  /** FDA statement required alongside structure/function claims. */
+  disclaimer: string
   variants?: ProductVariant[]
   ingredients: {
     hero_ingredients: {
@@ -46,9 +68,8 @@ export interface Product {
       benefit: string
       percentage: string | null
     }[]
-    complete_inci: string[]
+    other_ingredients: string[]
   }
-  skin_types: string[]
   concerns_addressed: string[]
   pricing: {
     mrp: number
@@ -128,7 +149,7 @@ export interface SearchSuggestion {
 export interface SearchFilters {
   categories?: string[]
   priceRange?: { min: number; max: number }
-  skinTypes?: string[]
+  dietaryBadges?: string[]
   concerns?: string[]
   ingredients?: string[]
   inStock?: boolean
@@ -195,8 +216,8 @@ export function searchProducts(query: string, filters?: SearchFilters): SearchRe
         if (price < filters.priceRange.min || price > filters.priceRange.max) return
       }
       
-      if (filters.skinTypes && filters.skinTypes.length > 0) {
-        if (!filters.skinTypes.some(type => product.skin_types.includes(type))) return
+      if (filters.dietaryBadges && filters.dietaryBadges.length > 0) {
+        if (!filters.dietaryBadges.some(type => product.dietary_badges.includes(type))) return
       }
       
       if (filters.concerns && filters.concerns.length > 0) {
@@ -210,7 +231,7 @@ export function searchProducts(query: string, filters?: SearchFilters): SearchRe
           product.ingredients.hero_ingredients.some(hero => 
             hero.name.toLowerCase().includes(ingredient.toLowerCase())
           ) ||
-          product.ingredients.complete_inci.some(inci =>
+          product.ingredients.other_ingredients.some(inci =>
             inci.toLowerCase().includes(ingredient.toLowerCase())
           )
         )) return
@@ -279,10 +300,10 @@ export function searchProducts(query: string, filters?: SearchFilters): SearchRe
       })
       
       // Match in skin types
-      product.skin_types.forEach(skinType => {
-        if (skinType.toLowerCase().includes(term)) {
+      product.dietary_badges.forEach(badge => {
+        if (badge.toLowerCase().includes(term)) {
           score += 25
-          matchedFields.push('skinTypes')
+          matchedFields.push('dietaryBadges')
         }
       })
       
@@ -459,7 +480,7 @@ export function getTrendingSearches(): string[] {
 // Get all unique values for filters
 export function getFilterOptions() {
   const categories = new Set<string>()
-  const skinTypes = new Set<string>()
+  const dietaryBadges = new Set<string>()
   const concerns = new Set<string>()
   const ingredients = new Set<string>()
   
@@ -473,7 +494,7 @@ export function getFilterOptions() {
     product.category.tags.forEach(tag => categories.add(tag))
     
     // Skin types
-    product.skin_types.forEach(type => skinTypes.add(type))
+    product.dietary_badges.forEach(type => dietaryBadges.add(type))
     
     // Concerns
     product.concerns_addressed.forEach(concern => concerns.add(concern))
@@ -489,7 +510,7 @@ export function getFilterOptions() {
 
   return {
     categories: Array.from(categories).sort(),
-    skinTypes: Array.from(skinTypes).sort(),
+    dietaryBadges: Array.from(dietaryBadges).sort(),
     concerns: Array.from(concerns).sort(),
     ingredients: Array.from(ingredients).sort(),
     priceRange: { min: minPrice, max: maxPrice }

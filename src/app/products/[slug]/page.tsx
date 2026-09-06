@@ -1440,7 +1440,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                     </h4>
                     <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                       <div className="flex flex-wrap gap-2">
-                        {product.ingredients.complete_inci
+                        {product.ingredients.other_ingredients
                           .slice(0, 8)
                           .map((ingredient, index) => (
                             <Badge
@@ -1451,12 +1451,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                               {ingredient}
                             </Badge>
                           ))}
-                        {product.ingredients.complete_inci.length > 8 && (
+                        {product.ingredients.other_ingredients.length > 8 && (
                           <Badge
                             variant="outline"
                             className="text-gray-500 border-gray-300 text-xs"
                           >
-                            +{product.ingredients.complete_inci.length - 8} more
+                            +{product.ingredients.other_ingredients.length - 8} more
                           </Badge>
                         )}
                       </div>
@@ -1508,7 +1508,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   <div>
                     <h4 className="font-semibold mb-3">Skin Types</h4>
                     <div className="grid grid-cols-2 gap-2">
-                      {product.skin_types.map((type) => (
+                      {product.dietary_badges.map((type) => (
                         <div
                           key={type}
                           className="flex items-center gap-2 p-3 rounded-lg"
