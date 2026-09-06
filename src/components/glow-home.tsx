@@ -15,6 +15,7 @@ import { Footer } from "@/components/website-layouts";
 import { Hero } from "@/components/hero";
 import { GlowSparkle } from "@/components/glow-logo";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { AllergenNotice } from "@/components/allergen-notice";
 import { colors } from "@/styles/colors";
 import { formatPrice } from "@/lib/currency";
 import { products } from "@/lib/products";
@@ -55,7 +56,7 @@ const BenefitsSection = () => (
           className="font-[family-name:var(--font-playfair)] text-4xl mb-3"
           style={{ color: colors.brand.navy }}
         >
-          One gummy a day
+          Two gummies a day
         </h2>
         <p style={{ color: colors.text.secondary }}>
           for the glow you deserve.
@@ -130,7 +131,7 @@ const HowToTakeItSection = () => (
       <div className="inline-flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm">
         {[
           `Serving size: ${product.serving.size}`,
-          `${product.serving.per_container} gummies per bottle`,
+          `${product.serving.gummy_count} gummies (${product.serving.per_container} servings)`,
           `Net weight ${product.net_weight}`,
           product.flavor,
         ].map((fact) => (
@@ -188,7 +189,8 @@ export default function GlowHome() {
       <BenefitsSection />
       <HowToTakeItSection />
       <ClosingCTA />
-      <div className="px-4 py-10">
+      <div className="px-6 py-10 space-y-4">
+        <AllergenNotice className="max-w-3xl mx-auto" />
         <LegalDisclaimer />
       </div>
       <Footer />

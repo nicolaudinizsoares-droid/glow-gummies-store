@@ -6,24 +6,128 @@
     "slug": "hair-skin-nails-gummies-passion-fruit",
     "tagline": "Beauty starts from within",
     "flavor": "Passion Fruit",
-    "short_description": "Daily beauty gummies that nourish your hair, skin and nails — in a passion fruit gummy you will actually look forward to.",
+    "short_description": "Daily beauty gummies that nourish your hair, skin and nails \u2014 in a passion fruit gummy you will actually look forward to.",
     "long_description": "Glow Hair, Skin & Nails is a daily beauty supplement in a passion fruit gummy. Beauty routines usually work from the outside in; this one works the other way round, supporting hair, skin and nails as part of your everyday routine. Vegetarian friendly, non-GMO, gluten free and made in the USA.",
     "category": {
       "primary": "Beauty Gummies",
-      "secondary": ["Hair, Skin & Nails", "Daily Supplement"],
-      "tags": ["beauty-from-within", "vegetarian", "non-gmo", "gluten-free"]
+      "secondary": [
+        "Hair, Skin & Nails",
+        "Daily Supplement"
+      ],
+      "tags": [
+        "beauty-from-within",
+        "vegetarian",
+        "non-gmo",
+        "gluten-free"
+      ]
     },
     "format": "Chewable gummy",
     "size": "60 gummies",
     "net_weight": "10.1 oz (286 g)",
     "serving": {
-      "size": "1 gummy",
-      "per_container": 60,
-      "directions": "Take one gummy daily. Chew thoroughly before swallowing. Do not exceed the recommended dose."
+      "size": "2 gummies",
+      "per_container": 30,
+      "gummy_count": 60,
+      "directions": "Take two gummies daily. Chew thoroughly before swallowing. Do not exceed the recommended dose."
     },
-    "supplement_facts": [],
+    "supplement_facts": [
+      {
+        "name": "Calories",
+        "amount": "15",
+        "daily_value": null
+      },
+      {
+        "name": "Total Carbohydrate",
+        "amount": "4 g",
+        "daily_value": "1%"
+      },
+      {
+        "name": "Total Sugars",
+        "amount": "4 g",
+        "daily_value": null
+      },
+      {
+        "name": "Includes 4 g Added Sugars",
+        "amount": "",
+        "daily_value": "8%"
+      },
+      {
+        "name": "Vitamin A (as retinyl acetate)",
+        "amount": "1200 mcg",
+        "daily_value": "133%"
+      },
+      {
+        "name": "Vitamin C (as ascorbic acid)",
+        "amount": "30 mg",
+        "daily_value": "33%"
+      },
+      {
+        "name": "Vitamin D (as cholecalciferol)",
+        "amount": "10 mcg",
+        "daily_value": "50%"
+      },
+      {
+        "name": "Vitamin E (as dl-Alpha tocopheryl acetate)",
+        "amount": "18 mg",
+        "daily_value": "120%"
+      },
+      {
+        "name": "Vitamin B-6 (as pyridoxine HCl)",
+        "amount": "2 mg",
+        "daily_value": "118%"
+      },
+      {
+        "name": "Folate",
+        "amount": "670 mcg DFE (400 mcg folic acid)",
+        "daily_value": "167%"
+      },
+      {
+        "name": "Vitamin B-12 (as cyanocobalamin)",
+        "amount": "8 mcg",
+        "daily_value": "333%"
+      },
+      {
+        "name": "Biotin",
+        "amount": "6000 mcg",
+        "daily_value": "20,000%"
+      },
+      {
+        "name": "Pantothenic Acid (as calcium d-pantothenate)",
+        "amount": "10 mg",
+        "daily_value": "200%"
+      },
+      {
+        "name": "Iodine (as potassium iodide)",
+        "amount": "80 mcg",
+        "daily_value": "53%"
+      },
+      {
+        "name": "Zinc (as zinc citrate)",
+        "amount": "2.7 mg",
+        "daily_value": "25%"
+      },
+      {
+        "name": "Sodium",
+        "amount": "10 mg",
+        "daily_value": "<1%"
+      },
+      {
+        "name": "PABA (para-Aminobenzoic Acid)",
+        "amount": "25 mg",
+        "daily_value": null
+      },
+      {
+        "name": "Collagen (piscine)",
+        "amount": "12 mg",
+        "daily_value": null
+      },
+      {
+        "name": "Silicon",
+        "amount": "2 mg",
+        "daily_value": null
+      }
+    ],
     "dietary_badges": [
-      "Vegetarian Friendly",
       "Non-GMO",
       "Gluten Free",
       "Made in the USA"
@@ -34,11 +138,15 @@
       "hero_ingredients": [],
       "other_ingredients": []
     },
-    "concerns_addressed": ["Stronger hair", "Radiant skin", "Healthy nails"],
+    "concerns_addressed": [
+      "Stronger hair",
+      "Radiant skin",
+      "Healthy nails"
+    ],
     "pricing": {
-      "mrp": 29.99,
-      "selling_price": 24.99,
-      "discount_percentage": 17
+      "mrp": 37.0,
+      "selling_price": 30.0,
+      "discount_percentage": 19
     },
     "inventory": {
       "stock_quantity": 500,
@@ -66,13 +174,25 @@
     "usage_instructions": "Take one gummy daily. Chew thoroughly before swallowing. Do not exceed the recommended dose.",
     "shipping": {
       "weight_grams": 380,
-      "dimensions_cm": { "length": 10, "width": 6, "height": 6 },
+      "dimensions_cm": {
+        "length": 10,
+        "width": 6,
+        "height": 6
+      },
       "free_shipping_eligible": true
     },
     "reviews": {
       "average_rating": 0,
       "total_reviews": 0,
       "review_highlights": []
-    }
+    },
+    "supplement_facts_footnotes": [
+      "% Daily Value (%DV) based on a 2,000 calorie diet.",
+      "Daily Value (DV) not established."
+    ],
+    "allergens": [
+      "Fish (Tilapia)",
+      "Tree nuts (Coconut)"
+    ]
   }
 ]

@@ -44,8 +44,12 @@ export interface Product {
   /** Net weight as printed on the label, e.g. "10.1 oz (286 g)". */
   net_weight: string
   serving: {
+    /** Serving size as printed on the panel, e.g. "2 gummies". */
     size: string
+    /** Servings per container -- NOT the gummy count. */
     per_container: number
+    /** Total gummies in the bottle. */
+    gummy_count: number
     directions: string
   }
   /**
@@ -57,8 +61,19 @@ export interface Product {
     amount: string
     daily_value: string | null
   }[]
-  /** Label claims such as "Non-GMO", "Gluten Free". */
+  /**
+   * Label claims such as "Non-GMO", "Gluten Free".
+   *
+   * "Vegetarian Friendly" is deliberately absent. The Supplement Facts panel
+   * lists Collagen (piscine) -- fish-derived -- and declares
+   * "Contains: Fish (Tilapia)", so the product is not vegetarian. Restore the
+   * claim only if it is verified against the real formula.
+   */
   dietary_badges: string[]
+  /** Allergen declaration from the panel. Must stay prominent. */
+  allergens: string[]
+  /** Footnote markers printed beneath the Supplement Facts table. */
+  supplement_facts_footnotes: string[]
   /** FDA statement required alongside structure/function claims. */
   disclaimer: string
   variants?: ProductVariant[]

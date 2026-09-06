@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageShell, Section, NeedsReview } from "@/components/page-shell";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
+import { AllergenNotice } from "@/components/allergen-notice";
 import { products } from "@/lib/products";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function IngredientsPage() {
                 <tr key={row.name} className="border-b">
                   <td className="py-2">{row.name}</td>
                   <td className="py-2 text-right">{row.amount}</td>
-                  <td className="py-2 text-right">{row.daily_value ?? "†"}</td>
+                  <td className="py-2 text-right">{row.daily_value ?? "***"}</td>
                 </tr>
               ))}
             </tbody>
@@ -44,12 +45,26 @@ export default function IngredientsPage() {
             Nothing is guessed here on purpose.
           </NeedsReview>
         )}
+        {product.supplement_facts.length > 0 && (
+          <ul className="text-xs space-y-1 pt-2">
+            {product.supplement_facts_footnotes.map((note, i) => (
+              <li key={note}>
+                {"*".repeat(i + 2)} {note}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+
+      <Section heading="Allergens">
+        <AllergenNotice />
       </Section>
 
       <Section heading="Serving">
         <p>
           {product.serving.directions} Each bottle contains{" "}
-          {product.serving.per_container} gummies.
+          {product.serving.gummy_count} gummies, which is{" "}
+          {product.serving.per_container} servings.
         </p>
       </Section>
 
