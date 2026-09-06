@@ -9,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Navigation, Footer } from "@/components/website-layouts";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/website-layouts";
 import { Leaf, Heart, Globe, Users, Award, Sparkles } from "lucide-react";
 import { colors } from "@/styles/colors";
 import Link from "next/link";

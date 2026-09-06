@@ -11,7 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Navigation, Footer } from "@/components/website-layouts";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/website-layouts";
 import { EnhancedSearch } from "@/components/enhanced-search";
 import {
   Search,

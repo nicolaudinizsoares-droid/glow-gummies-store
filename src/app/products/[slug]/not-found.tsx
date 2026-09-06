@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Navigation, Footer } from '@/components/website-layouts'
+import { Navigation } from '@/components/navigation'
+import { Footer } from '@/components/website-layouts'
 import { ArrowLeft, Search, Home } from 'lucide-react'
 import { colors } from '@/styles/colors'
 import Link from 'next/link'

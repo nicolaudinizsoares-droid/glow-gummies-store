@@ -21,8 +21,7 @@ export const BottlePlaceholder = ({
   label?: string;
 }) => (
   <div
-    className={`relative flex items-center justify-center overflow-hidden ${className}`}
-    style={{ background: colors.gradients.hero }}
+    className={`relative flex items-center justify-center ${className}`}
   >
     <svg viewBox="0 0 160 220" className="h-full w-auto py-6" role="img" aria-label={`${label} bottle`}>
       {/* cap */}
@@ -50,6 +49,49 @@ export const BottlePlaceholder = ({
   </div>
 );
 
+
+/** Stylised cap, for when the cap cut-out is missing. */
+export const CapPlaceholder = ({ className = "" }: { className?: string }) => (
+  <div className={`flex items-center justify-center ${className}`}>
+    <svg viewBox="0 0 120 60" className="w-full h-auto" role="presentation">
+      <rect
+        x="6"
+        y="8"
+        width="108"
+        height="44"
+        rx="9"
+        fill="#FFFFFF"
+        stroke={colors.brand.creamPale}
+        strokeWidth="2"
+      />
+      {Array.from({ length: 11 }).map((_, i) => (
+        <line
+          key={i}
+          x1={16 + i * 9}
+          y1="14"
+          x2={16 + i * 9}
+          y2="46"
+          stroke={colors.brand.creamPale}
+          strokeWidth="1.5"
+        />
+      ))}
+    </svg>
+  </div>
+);
+
+/** Stylised gummy, for when a gummy cut-out is missing. */
+export const GummyPlaceholder = ({ className = "" }: { className?: string }) => (
+  <div className={`flex items-center justify-center ${className}`}>
+    <svg viewBox="0 0 40 40" className="w-full h-full" role="presentation">
+      <path
+        d="M20 4c8 0 14 6 14 14v10a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V18C6 10 12 4 20 4Z"
+        fill={colors.brand.berry}
+      />
+      <ellipse cx="15" cy="14" rx="4" ry="5" fill="#FFFFFF" fillOpacity="0.28" />
+    </svg>
+  </div>
+);
+
 interface ProductImageProps {
   src?: string;
   alt: string;
@@ -58,6 +100,8 @@ interface ProductImageProps {
   width?: number;
   height?: number;
   priority?: boolean;
+  /** Which placeholder to draw when the file is missing. */
+  variant?: "bottle" | "cap" | "gummy";
 }
 
 export const ProductImage = ({
@@ -67,10 +111,13 @@ export const ProductImage = ({
   width = 600,
   height = 600,
   priority = false,
+  variant = "bottle",
 }: ProductImageProps) => {
   const [failed, setFailed] = useState(false);
 
   if (!src || failed) {
+    if (variant === "cap") return <CapPlaceholder className={className} />;
+    if (variant === "gummy") return <GummyPlaceholder className={className} />;
     return <BottlePlaceholder className={className} label={alt} />;
   }
 

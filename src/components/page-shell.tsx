@@ -1,6 +1,7 @@
 // Shared shell for the site's content pages (support, policy, info).
 
-import { Navigation, Footer } from "@/components/website-layouts";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/website-layouts";
 import { colors } from "@/styles/colors";
 
 export const PageShell = ({

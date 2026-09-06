@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Layout Components
-import { Navigation, Footer } from "@/components/website-layouts";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/website-layouts";
 
 // Icons
 import {

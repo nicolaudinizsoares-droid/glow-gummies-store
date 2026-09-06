@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Navigation, Footer } from "@/components/website-layouts";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/website-layouts";
 import {
   ShoppingBag,
   Minus,

@@ -7,12 +7,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { Leaf, FlaskConical, Wheat, Heart, Sparkles, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Navigation, Footer } from "@/components/website-layouts";
-import { ProductImage } from "@/components/product-image";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/website-layouts";
+import { Hero } from "@/components/hero";
 import { GlowSparkle } from "@/components/glow-logo";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { colors } from "@/styles/colors";
@@ -47,90 +47,8 @@ const BADGE_ICONS: Record<string, typeof Leaf> = {
   "Made in the USA": Heart,
 };
 
-const HeroSection = () => {
-  const { addToCart } = useCart();
-
-  return (
-    <section
-      className="px-4 py-16 md:py-24"
-      style={{ background: colors.gradients.hero }}
-    >
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <p
-            className="uppercase tracking-[0.2em] text-xs font-semibold mb-4"
-            style={{ color: colors.brand.navyLight }}
-          >
-            Daily beauty gummies
-          </p>
-          <h1
-            className="font-[family-name:var(--font-playfair)] text-5xl md:text-6xl leading-[1.05] mb-6"
-            style={{ color: colors.brand.navy }}
-          >
-            Beauty starts
-            <br />
-            from within.
-          </h1>
-          <p
-            className="text-lg leading-relaxed mb-8 max-w-md"
-            style={{ color: colors.text.secondary }}
-          >
-            Nourish your hair, skin and nails with every delicious gummy.
-            Passion fruit flavour, {product.serving.per_container} to a bottle.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4">
-            <Button
-              size="lg"
-              className="text-white font-semibold px-8"
-              style={{ backgroundColor: colors.brand.navy }}
-              onClick={() =>
-                addToCart({
-                  id: product.id,
-                  name: product.name,
-                  price: product.pricing.selling_price,
-                  image: product.images.primary,
-                  category: product.category.primary,
-                  size: product.size,
-                  sku: product.sku,
-                })
-              }
-            >
-              Add to bag — {formatPrice(product.pricing.selling_price)}
-            </Button>
-            <Link
-              href={`/products/${product.slug}`}
-              className="text-sm font-medium underline underline-offset-4"
-              style={{ color: colors.brand.navyLight }}
-            >
-              See the full details
-            </Link>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-        >
-          <ProductImage
-            src={product.images.primary}
-            alt={product.name}
-            priority
-            className="w-full rounded-2xl aspect-square object-contain"
-          />
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
 const BenefitsSection = () => (
-  <section id="benefits" className="px-4 py-20">
+  <section id="the-glow" className="px-4 py-20">
     <div className="max-w-5xl mx-auto">
       <div className="text-center mb-14">
         <h2
@@ -265,7 +183,7 @@ export default function GlowHome() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.brand.offWhite }}>
       <Navigation />
-      <HeroSection />
+      <Hero />
       <BadgeStrip />
       <BenefitsSection />
       <HowToTakeItSection />
