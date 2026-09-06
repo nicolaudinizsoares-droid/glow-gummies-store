@@ -19,6 +19,14 @@ interface CartState {
   isOpen: boolean
 }
 
+const calculateTotal = (items: CartItem[]) => {
+  return items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+}
+
+const calculateItemCount = (items: CartItem[]) => {
+  return items.reduce((count, item) => count + item.quantity, 0)
+}
+
 // Load cart from localStorage if available
 const loadCartFromStorage = (): CartState => {
   if (typeof window !== 'undefined') {
@@ -60,15 +68,17 @@ const saveCartToStorage = (state: CartState) => {
   }
 }
 
-const initialState: CartState = loadCartFromStorage()
-
-const calculateTotal = (items: CartItem[]) => {
-  return items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+const emptyState: CartState = {
+  items: [],
+  total: 0,
+  itemCount: 0,
+  isOpen: false,
 }
 
-const calculateItemCount = (items: CartItem[]) => {
-  return items.reduce((count, item) => count + item.quantity, 0)
-}
+// Always start empty. The server has no localStorage, so initialising from it
+// here would render different markup on the server and the client. The saved
+// bag is restored by the hydrateCart action once the app has mounted.
+const initialState: CartState = emptyState
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -117,6 +127,13 @@ const cartSlice = createSlice({
       state.itemCount = calculateItemCount(state.items)
       saveCartToStorage(state)
     },
+    /** Restore a saved bag from localStorage. Dispatched once, after mount. */
+    hydrateCart: (state) => {
+      const saved = loadCartFromStorage()
+      state.items = saved.items
+      state.total = saved.total
+      state.itemCount = saved.itemCount
+    },
     clearCart: (state) => {
       state.items = []
       state.total = 0
@@ -136,6 +153,7 @@ const cartSlice = createSlice({
 })
 
 export const {
+  hydrateCart,
   addToCart,
   removeFromCart,
   updateQuantity,

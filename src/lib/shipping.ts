@@ -5,12 +5,15 @@
 // rupees. Read as dollars they charge $50 to ship a $30 bottle, and the free
 // threshold is 33 times the price of the only product.
 //
-// Glow has not set a real shipping policy yet, so rather than invent rates the
-// cart shows "Calculated at checkout", which is honest and standard. When the
-// real policy exists, set mode to "flat" and fill in the numbers here; nothing
-// else needs to change.
+// Glow ships free on every order, so mode is "free" and the cart shows Free
+// throughout with no cost added to the total.
+//
+// Two other modes exist for when that changes: "flat" charges flatRate below
+// freeThreshold and nothing at or above it, and "at_checkout" shows
+// "Calculated at checkout" without committing to a number. Switching is a
+// one-line change here; nothing else needs to move.
 
-export type ShippingMode = "at_checkout" | "flat";
+export type ShippingMode = "free" | "at_checkout" | "flat";
 
 export const SHIPPING: {
   mode: ShippingMode;
@@ -19,7 +22,7 @@ export const SHIPPING: {
   /** Subtotal at or above which shipping is free. Used when mode is "flat". */
   freeThreshold: number;
 } = {
-  mode: "at_checkout",
+  mode: "free",
   flatRate: 0,
   freeThreshold: 0,
 };
@@ -34,6 +37,10 @@ export interface ShippingResult {
 }
 
 export function calculateShipping(subtotal: number): ShippingResult {
+  if (SHIPPING.mode === "free") {
+    return { cost: 0, label: "Free", remainingForFree: null };
+  }
+
   if (SHIPPING.mode === "at_checkout") {
     return { cost: null, label: "Calculated at checkout", remainingForFree: null };
   }

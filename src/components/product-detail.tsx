@@ -140,9 +140,16 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                   Save {formatPrice(saving)}
                 </span>
               </div>
-              <p className="text-sm mb-8" style={{ color: semantic.text.muted }}>
+              <p className="text-sm mb-2" style={{ color: semantic.text.muted }}>
                 {product.flavor} · {product.serving.gummy_count} gummies ·{" "}
                 {product.serving.per_container} days
+              </p>
+              <p
+                className="flex items-center gap-1.5 text-sm mb-8"
+                style={{ color: semantic.text.primary }}
+              >
+                <Truck className="w-4 h-4" style={{ color: semantic.accent.metallic }} />
+                Free shipping
               </p>
 
               {/* Quantity */}
@@ -282,7 +289,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
         <section className="px-6 md:px-8 py-16" style={{ backgroundColor: semantic.surface.sunken }}>
           <div className="max-w-4xl mx-auto grid sm:grid-cols-3 gap-8">
             {[
-              { Icon: Truck, title: "Shipping", copy: "Processed on business days.", href: "/shipping", cta: "Shipping details" },
+              { Icon: Truck, title: "Free shipping", copy: "On every order, no minimum.", href: "/shipping", cta: "Shipping details" },
               { Icon: RotateCcw, title: "Returns", copy: "If Glow is not right for you.", href: "/returns", cta: "Return policy" },
               { Icon: ShieldCheck, title: "Questions", copy: "Ingredients, dosage and diet.", href: "/faq", cta: "Read the FAQ" },
             ].map(({ Icon, title, copy, href, cta }) => (

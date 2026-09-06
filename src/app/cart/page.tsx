@@ -193,7 +193,7 @@ export default function CartPage() {
                   Checkout
                 </button>
                 <p className="text-xs text-center mt-3" style={{ color: semantic.text.muted }}>
-                  Shipping and taxes calculated at checkout.
+                  Free shipping on every order. Taxes calculated at checkout.
                 </p>
 
                 <AllergenNotice className="mt-6" />

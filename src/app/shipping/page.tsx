@@ -16,11 +16,17 @@ export default function ShippingPage() {
         </p>
       </Section>
 
-      <Section heading="Rates and delivery times">
+      <Section heading="Rates">
+        <p>
+          Shipping is free on every Glow order, with no minimum spend. The
+          price you see is the price you pay.
+        </p>
+      </Section>
+
+      <Section heading="Delivery times">
         <NeedsReview>
-          Carrier, delivery windows, shipping rates, and the free-shipping
-          threshold have not been set. The cart currently shows a placeholder
-          threshold that needs replacing with your real policy.
+          Carrier and delivery windows have not been supplied. Customers ask
+          this before they buy, so it is worth filling in.
         </NeedsReview>
       </Section>
 
