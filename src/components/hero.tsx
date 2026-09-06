@@ -41,9 +41,10 @@ export const Hero = () => {
         start: "top top",
         end: "bottom bottom",
         scrub: 1,
-        pin: stage,
-        pinSpacing: false,
-        anticipatePin: 1,
+        // No pin here: the stage is held by CSS position:sticky, which works
+        // without JavaScript and so survives reduced motion. Adding
+        // ScrollTrigger's pin on top of it made both fight for the same
+        // element and left a two-viewport gap once the pin released.
       },
     });
 
