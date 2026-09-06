@@ -24,6 +24,7 @@
   --glow-blush-pale: #F5E1DB;
   --glow-berry: #C9202F;
   --glow-gray: #6B7280;
+  --glow-gold: #C8A063;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -60,25 +61,25 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --radius: 0.25rem; /* restrained: luxury reads sharper than rounded */
+  --background: #FDFBF7;
+  --foreground: #0F2A4C;
+  --card: #FFFFFF;
+  --card-foreground: #0F2A4C;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F2A4C;
+  --primary: #0F2A4C;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FAF4EA;
+  --secondary-foreground: #0F2A4C;
+  --muted: #F7E8D5;
+  --muted-foreground: #57534E;
+  --accent: #F0A868;
+  --accent-foreground: #0F2A4C;
+  --destructive: #C9202F;
+  --border: #F3E2CE;
+  --input: #EAD5BC;
+  --ring: #F0A868;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -132,91 +133,119 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
-    /* Glassmorphism background */
-    background: linear-gradient(135deg,
-      var(--glow-off-white) 0%,
-      var(--glow-cream-pale) 25%,
-      var(--glow-blush-pale) 50%,
-      var(--glow-cream-pale) 75%,
-      var(--glow-off-white) 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    /* Flat warm white. The previous 400%-sized gradient animated forever,
+       which cost GPU on every frame for an effect nobody could name. */
+    background-color: var(--glow-off-white);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Editorial display type. */
+  h1, h2, h3 {
+    font-family: var(--font-playfair), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  ::selection {
+    background-color: var(--glow-apricot);
+    color: var(--glow-navy);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--glow-apricot);
+    outline-offset: 3px;
   }
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Glassmorphism Utility Classes */
 @layer utilities {
-  .glass {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Uppercase eyebrow label above a heading. */
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--glow-navy-light);
   }
-  
-  .glass-strong {
-    background: rgba(255, 255, 255, 0.35);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+
+  /* Thin printed rule, echoing the gold border on the label. */
+  .rule-metallic {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--glow-gold) 30%,
+      var(--glow-gold) 70%,
+      transparent
+    );
   }
-  
+
+  /*
+   * Surface utilities. These keep the .glass-* class names the existing
+   * markup already uses, but the treatment is now a restrained tinted
+   * surface rather than heavy blur -- backdrop-filter is expensive on
+   * mobile GPUs and the frosted look reads dated for a beauty brand.
+   */
+  .glass,
+  .glass-morphism,
   .glass-subtle {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--glow-cream-pale);
   }
-  
-  .glass-dark {
-    background: rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-  }
-  
+
+  .glass-strong,
   .glass-card {
-    background: rgba(244, 237, 228, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(244, 237, 228, 0.3);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    background-color: #ffffff;
+    border: 1px solid var(--glow-cream-pale);
+    box-shadow:
+      0 1px 2px rgba(10, 29, 54, 0.04),
+      0 8px 24px rgba(10, 29, 54, 0.06);
   }
-  
+
+  .glass-dark {
+    background-color: rgba(15, 42, 76, 0.9);
+    color: #ffffff;
+  }
+
+  /* The nav is the one place a light blur genuinely earns its cost. */
   .glass-nav {
-    background: rgba(250, 250, 250, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(253, 251, 247, 0.72);
+    backdrop-filter: saturate(150%) blur(12px);
+    -webkit-backdrop-filter: saturate(150%) blur(12px);
+    border-bottom: 1px solid var(--glow-cream-pale);
   }
-  
+
   .glass-button {
-    background: rgba(230, 166, 0, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(230, 166, 0, 0.3);
-    transition: all 0.3s ease;
+    background-color: transparent;
+    transition: background-color 200ms ease;
   }
-  
+
   .glass-button:hover {
-    background: rgba(230, 166, 0, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(230, 166, 0, 0.2);
+    background-color: var(--glow-cream-pale);
   }
-  
+
+  /* Was an infinite 6s float. Now inert; kept so existing markup is valid. */
   .floating-element {
-    animation: float 6s ease-in-out infinite;
+    will-change: auto;
   }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+}
+
+/*
+ * Respect the OS reduced-motion setting. GSAP timelines check this too, but
+ * this catches CSS transitions and any animation added later.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
