@@ -24,7 +24,7 @@ export const ProductCta = () => {
             alt={product.name}
             width={760}
             height={1470}
-            className="w-full max-w-[260px] mx-auto h-auto drop-shadow-[0_24px_40px_rgba(10,29,54,0.14)]"
+            className="w-full max-w-[215px] mx-auto h-auto drop-shadow-[0_24px_40px_rgba(10,29,54,0.14)]"
           />
         </Reveal>
 

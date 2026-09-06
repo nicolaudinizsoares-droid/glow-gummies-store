@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { Provider, useDispatch } from 'react-redux'
 import { store } from './store'
 import { hydrateCart } from './features/cartSlice'
+import { PageViewTracker } from '@/components/analytics-events'
 
 // React Query was mounted here with its devtools, but the storefront makes no
 // queries: product data is a static import and the cart is Redux. Both were
@@ -29,6 +30,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
       <CartHydrator />
+      <PageViewTracker />
       {children}
     </Provider>
   )

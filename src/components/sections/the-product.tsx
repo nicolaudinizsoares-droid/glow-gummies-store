@@ -98,7 +98,7 @@ export const TheProduct = () => (
           alt={`${product.name}, ${product.flavor}`}
           width={760}
           height={1470}
-          className="w-full max-w-[380px] mx-auto h-auto drop-shadow-[0_30px_50px_rgba(10,29,54,0.14)]"
+          className="w-full max-w-[290px] mx-auto h-auto drop-shadow-[0_30px_50px_rgba(10,29,54,0.14)]"
         />
       </Reveal>
     </div>

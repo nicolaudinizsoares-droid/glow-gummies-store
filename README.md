@@ -1,164 +1,96 @@
-# Glow - Nature-Inspired Website with Next.js
+# Glow
 
-This is a comprehensive **Glow website** built with [Next.js](https://nextjs.org) and enhanced with a complete **nature-inspired color strategy**. The project demonstrates a modern e-commerce skincare website with product categorization, color-coded UI elements, and a seamless design system.
+Storefront for Glow Hair, Skin & Nails gummies. Next.js 15 (App Router),
+TypeScript, Tailwind v4, Redux for the cart.
 
-## 🎨 **Nature-Inspired Color Strategy**
-
-The website implements a **clean, airy, and modern** aesthetic that feels:
-- **Scientifically credible** with professional color choices
-- **Emotionally inviting & feminine** through nature-inspired palettes  
-- **Product-category distinct** with unique accent colors per SKU
-- **Packaging consistent** for seamless online-to-offline experience
-
-### Global Brand Colors
-- **Soft Sand Beige** (`#F4EDE4`) - Premium backgrounds
-- **Off White** (`#FAFAFA`) - Clean, breathable base
-- **Charcoal Grey** (`#2E2E2E`) - Primary typography
-- **Turmeric Gold** (`#E6A600`) - Primary CTAs and actions
-- **Misty Blue** (`#A8C6D7`) - Soft highlights and dividers
-
-### Product Category System
-Each skincare category has its own accent color:
-- **Cleanser** → Botanical Green (`#4A7C59`)
-- **Hydrating Serums** → Misty Blue (`#A8C6D7`)
-- **Brightening Serums** → Turmeric Gold (`#E6A600`)
-- **Sunscreen** → Citrus Yellow (`#FFD45A`)
-- **Acne Control** → Earth Clay (`#B86B4B`)
-- **Anti-Aging** → Deep Plum (`#5A3A55`)
-- **Soothing Care** → Lotus Pink (`#F3A6B5`)
-
-## 🚀 Tech Stack
-
-- **Framework**: Next.js 15.5.2 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + Custom CSS Properties
-- **State Management**: Redux Toolkit
-- **Data Fetching**: TanStack Query (React Query)
-- **UI Components**: Shadcn UI
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
-- **Development**: Turbopack for fast development builds
-
-## 🛠️ Features
-
-### ✅ **Complete Website Implementation**
-- Navigation with category-specific accent colors
-- Hero section with nature-inspired gradients
-- Product cards with dynamic color theming
-- Category pages with filtered product views
-- Product detail pages with accent-based CTAs
-- Education/blog section with topic-specific colors
-- Footer with brand-consistent styling
-
-### ✅ **Dynamic Color System**
-- CSS custom properties for product categories
-- React components with TypeScript color integration
-- Hover states and smooth transitions
-- Accessibility-compliant contrast ratios
-- Responsive design adaptations
-
-### ✅ **Modern Development Practices**
-- TypeScript for type safety
-- Component-based architecture
-- Custom hooks for state management
-- Framer Motion animations
-- ESLint and code quality tools
-
-## 🎯 Getting Started
-
-1. **Install dependencies:**
 ```bash
 npm install
+npm run dev        # http://localhost:3000
 ```
 
-2. **Run the development server:**
-```bash
-npm run dev
-```
+| Script | |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build; also checks assets and the spin manifest |
+| `npm run start` | Serve the production build |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
 
-3. **Open your browser:**
-Visit [http://localhost:3000](http://localhost:3000) to see the Glow website.
+Type and lint errors fail the build. They were previously suppressed in
+`next.config.ts`, which hid eleven real ones.
 
-## 📁 Project Structure
+## One product, one source of truth
+
+`src/data/products.json` holds the single SKU, transcribed from the printed
+label: Supplement Facts, serving size, allergens, net weight, claims. Every
+page reads from it, so the site cannot drift from the packaging. The label
+texture on the rendered artwork reads from it too.
+
+Change a figure there and it changes everywhere.
+
+## Things that are deliberate
+
+**No reviews.** `src/data/reviews.json` is empty and the section says so.
+Fabricated reviews are actionable under the FTC rule on consumer reviews. To
+preview the layout, run dev with `NEXT_PUBLIC_SHOW_SAMPLE_REVIEWS=1`; the
+fixture is dropped from production builds.
+
+**No "Vegetarian Friendly" claim.** The Supplement Facts list Collagen
+(piscine) and declare `Contains: Fish (Tilapia)`. The packaging still carries
+the claim; the site does not. See `dietary_badges` in `src/lib/products.ts`.
+
+**Two gummies a day, not one.** The panel says serving size 2, 30 servings.
+Some marketing says one, which would be half the intended dose.
+
+**No card fields at checkout.** No processor is connected, and a card form
+that goes nowhere invites real card numbers onto a page that cannot charge
+them. See `src/lib/checkout.ts`.
+
+**Privacy and Terms are blank.** Placeholder legal text reads as binding.
+
+Pages showing a "To confirm:" block are waiting on information: support
+email, carrier and delivery times, return window, manufacturing details.
+
+## Layout of the code
 
 ```
 src/
-├── app/
-│   ├── layout.tsx              # Root layout with providers
-│   ├── page.tsx                # Homepage with Glow demo
-│   └── globals.css             # Global styles with color system
-├── components/
-│   ├── ui/                     # Shadcn UI components
-│   ├── glow-home.tsx   # Main website demo component
-│   └── website-layouts.tsx     # Navigation, footer, page layouts
-├── lib/
-│   ├── features/
-│   │   └── counterSlice.ts     # Redux slice example
-│   ├── hooks.ts                # Typed Redux hooks
-│   ├── providers.tsx           # React Query and Redux providers
-│   ├── store.ts                # Redux store configuration
-│   └── utils.ts                # Utility functions
-└── styles/
-    └── colors.ts               # Complete color system definition
+  app/                  routes; product page is a server component with
+                        metadata and Product structured data
+  components/
+    sections/           the eleven homepage sections
+    hero.tsx            scroll-scrubbed cap-lift sequence
+    bottle-spin.tsx     turntable viewer, used when frames exist
+  lib/
+    products.ts         product types and search
+    currency.ts         one place to change currency
+    shipping.ts         one place to change shipping policy
+    checkout.ts         processor flag and validation
+    analytics.ts        typed events; nothing sent without consent
+    motion/use-gsap.ts  lazy GSAP, reduced-motion aware
+  styles/tokens.ts      primitive -> semantic -> component tokens
 ```
 
-## 🎨 **Color Strategy Documentation**
+## Images
 
-See [`TSO_SKINCARE_COLOR_STRATEGY.md`](./TSO_SKINCARE_COLOR_STRATEGY.md) for comprehensive documentation including:
-- Complete color palette definitions
-- Page-specific implementation guidelines
-- CSS custom properties usage
-- Component integration examples
-- Accessibility compliance details
-- Responsive design considerations
+`public/products/` holds the product photography. `public/brand/` holds the
+logo: `glow-logo.png` is the full lockup, `glow-logo-mark.png` the wordmark
+alone, which is what the nav and footer use because the tagline is unreadable
+at that size.
 
-## 🔧 Available Scripts
+`scripts/check-assets.mjs` fails the build if the product data references an
+image that is not there. That check exists because the data pointed at a file
+that never existed for several commits, and the placeholder fallback hid it.
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+`public/products/spin/` is empty. Drop turntable frames in named `001.png`
+onward and the hero switches from the cap-lift sequence to a 360 spin; the
+photography brief is in that folder. `tools/spin-render/` can generate
+frames from a 3D model if photography is not available.
 
-## 🌟 **Website Sections Implemented**
+## Before going live
 
-### **Homepage**
-- Hero with nature-inspired gradient background
-- Category showcase with product-specific colors
-- Featured products grid with hover animations
-- Trust indicators with branded iconography
-- Educational blog preview section
-
-### **Product System**
-- Dynamic product cards with category-based styling
-- Color-coded badges and CTAs
-- Smooth hover transitions and micro-interactions
-- Rating displays and benefit highlights
-
-### **Color Palette Showcase**
-- Visual documentation of the complete color system
-- Interactive color swatches with hex values
-- Brand foundation and product category demonstrations
-
-## 📚 Learn More
-
-### Technologies Used:
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Redux Toolkit](https://redux-toolkit.js.org/)
-- [TanStack Query](https://tanstack.com/query)
-- [Shadcn UI](https://ui.shadcn.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Tailwind CSS](https://tailwindcss.com/)
-
-### Design Inspiration:
-- Nature-inspired color palettes
-- Clean e-commerce aesthetics  
-- Skincare industry best practices
-- Accessibility-first design principles
-
-## 🚢 Deploy on Vercel
-
-The easiest way to deploy this Glow website is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
-
----
-
-**This project demonstrates a complete implementation of a modern skincare e-commerce website with a sophisticated nature-inspired color strategy, built with cutting-edge web technologies.**
+- Set `NEXT_PUBLIC_SITE_URL`, or the sitemap, canonicals and Open Graph tags
+  all point at localhost.
+- Connect a payment processor.
+- Fill in the "To confirm:" pages, and Privacy and Terms.
+- Confirm the packaging discrepancies above are resolved in print.

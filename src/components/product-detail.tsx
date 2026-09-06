@@ -15,6 +15,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/website-layouts";
 import { ProductImage } from "@/components/product-image";
 import { AllergenNotice } from "@/components/allergen-notice";
+import { ViewItemTracker } from "@/components/analytics-events";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { getProductBySlug } from "@/lib/products";
@@ -53,6 +54,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: semantic.surface.page }}>
+      <ViewItemTracker id={product.id} item={product.name} value={price} />
       <Navigation />
 
       <main className="pt-16 md:pt-20">
@@ -82,7 +84,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                   width={760}
                   height={1470}
                   priority
-                  className="w-full max-w-[300px] h-auto object-contain drop-shadow-[0_24px_40px_rgba(10,29,54,0.16)]"
+                  className="w-full max-w-[260px] h-auto object-contain drop-shadow-[0_24px_40px_rgba(10,29,54,0.16)]"
                 />
               </div>
               <div className="flex gap-3 mt-3">

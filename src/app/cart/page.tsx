@@ -8,6 +8,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/website-layouts";
 import { ProductImage } from "@/components/product-image";
 import { AllergenNotice } from "@/components/allergen-notice";
+import { ViewCartTracker } from "@/components/analytics-events";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/currency";
 import { calculateShipping } from "@/lib/shipping";
@@ -19,6 +20,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: semantic.surface.page }}>
+      <ViewCartTracker value={total} items={items.length} />
       <Navigation />
 
       <main className="flex-1 px-6 md:px-8 pt-32 md:pt-40 pb-12 md:pb-16">
