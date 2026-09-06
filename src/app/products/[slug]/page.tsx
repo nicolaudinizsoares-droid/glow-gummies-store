@@ -30,6 +30,7 @@ import {
 // Utils and Hooks
 import { colors } from "@/styles/colors";
 import { useCart } from "@/hooks/useCart";
+import { formatPrice } from "@/lib/currency";
 import {
   getProductBySlug,
   getDefaultVariant,
@@ -403,7 +404,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                       className="text-3xl md:text-4xl font-bold"
                       style={{ color: colors.text.primary }}
                     >
-                      ₹{currentPrice.selling_price}
+                      {formatPrice(currentPrice.selling_price)}
                     </span>
                     {currentPrice.discount_percentage > 0 && (
                       <>
@@ -411,7 +412,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                           className="text-xl md:text-2xl line-through opacity-60"
                           style={{ color: colors.text.secondary }}
                         >
-                          ₹{currentPrice.mrp}
+                          {formatPrice(currentPrice.mrp)}
                         </span>
                         <Badge
                           className="text-white font-semibold px-3 py-2 rounded-full border-0"
@@ -582,7 +583,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                                   className="font-bold text-lg"
                                   style={{ color: colors.text.primary }}
                                 >
-                                  ₹{priceForSize.selling_price}
+                                  {formatPrice(priceForSize.selling_price)}
                                 </div>
                                 {size === "50ml" && (
                                   <div
@@ -682,7 +683,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   >
                     <ShoppingCart className="mr-2 h-5 w-5" />
                     {inStock
-                      ? `Add to Cart - ₹${currentPrice.selling_price}`
+                      ? `Add to Cart - ${formatPrice(currentPrice.selling_price)}`
                       : "Out of Stock"}
                   </Button>
 
@@ -1154,7 +1155,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               </p>
               <div className="bg-yellow-100 inline-block px-4 py-2 rounded-lg">
                 <span className="text-yellow-800 text-sm font-medium">
-                  💡 Save ₹200 when you buy all 3 steps together
+                  💡 Save {formatPrice(200)} when you buy all 3 steps together
                 </span>
               </div>
             </div>
@@ -1163,8 +1164,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               {[
                 {
                   name: "Gentle Cleanser",
-                  price: "₹599",
-                  originalPrice: "₹699",
+                  price: 599,
+                  originalPrice: 699,
                   category: "cleanser",
                   step: "Step 1",
                   time: "Morning & Night",
@@ -1187,8 +1188,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 },
                 {
                   name: "Moisturizing Cream",
-                  price: "₹749",
-                  originalPrice: "₹849",
+                  price: 749,
+                  originalPrice: 849,
                   category: "moisturizer",
                   step: "Step 3",
                   time: "Always last",
@@ -1234,11 +1235,11 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                       <div className="mb-3">
                         <div className="flex items-center justify-center gap-2 mb-1">
                           <span className="text-2xl font-bold text-gray-900">
-                            ₹{item.price}
+                            {formatPrice(item.price)}
                           </span>
                           {item.originalPrice && (
                             <span className="text-lg text-gray-500 line-through">
-                              ₹{item.originalPrice}
+                              {formatPrice(item.originalPrice)}
                             </span>
                           )}
                         </div>
@@ -1288,18 +1289,20 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               <div className="flex items-center justify-center gap-4 mb-4">
                 <div>
                   <span className="text-2xl font-bold">
-                    ₹{599 + currentPrice.selling_price + 749}
+                    {formatPrice(599 + currentPrice.selling_price + 749)}
                   </span>
                   <span className="text-lg line-through opacity-75 ml-2">
-                    ₹{699 + currentPrice.mrp + 849}
+                    {formatPrice(699 + currentPrice.mrp + 849)}
                   </span>
                 </div>
                 <Badge className="bg-yellow-400 text-yellow-900 font-bold">
-                  Save ₹
-                  {699 +
-                    currentPrice.mrp +
-                    849 -
-                    (599 + currentPrice.selling_price + 749)}
+                  Save{" "}
+                  {formatPrice(
+                    699 +
+                      currentPrice.mrp +
+                      849 -
+                      (599 + currentPrice.selling_price + 749)
+                  )}
                 </Badge>
               </div>
               <p className="text-sm opacity-90 mb-4">
@@ -1682,9 +1685,9 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                           icon: "💰",
                           title: "Save 15%",
                           desc:
-                            "₹" +
-                            Math.round(currentPrice.selling_price * 0.85) +
-                            " per delivery",
+                            formatPrice(
+                              Math.round(currentPrice.selling_price * 0.85)
+                            ) + " per delivery",
                         },
                         {
                           icon: "📅",
@@ -1772,8 +1775,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                       className="w-full mb-4"
                       style={{ backgroundColor: productColors.primary }}
                     >
-                      🔄 Subscribe & Save ₹
-                      {Math.round(currentPrice.selling_price * 0.15)}
+                      🔄 Subscribe & Save{" "}
+                      {formatPrice(
+                        Math.round(currentPrice.selling_price * 0.15)
+                      )}
                     </Button>
 
                     <div className="text-center">

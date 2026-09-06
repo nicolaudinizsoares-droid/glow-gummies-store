@@ -37,6 +37,7 @@ import {
 } from "@/lib/products";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
+import { formatPrice } from "@/lib/currency";
 
 // Product Card Component for the actual products
 interface RealProductCardProps {
@@ -162,11 +163,11 @@ const RealProductCard = ({ product }: RealProductCardProps) => {
             <div className="flex items-center gap-2">
               {product.pricing.discount_percentage > 0 && (
                 <span className="text-sm text-gray-500 line-through">
-                  ₹{product.pricing.mrp}
+                  {formatPrice(product.pricing.mrp)}
                 </span>
               )}
               <span className="text-lg font-bold text-gray-900">
-                ₹{product.pricing.selling_price}
+                {formatPrice(product.pricing.selling_price)}
               </span>
               {product.pricing.discount_percentage > 0 && (
                 <Badge

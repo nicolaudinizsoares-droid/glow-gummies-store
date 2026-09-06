@@ -17,6 +17,7 @@ import {
 import { colors } from "@/styles/colors";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
+import { formatPrice } from "@/lib/currency";
 
 export default function CartPage() {
   const { items, total, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -183,10 +184,10 @@ export default function CartPage() {
                                 className="font-semibold text-lg"
                                 style={{ color: colors.brand.goldenDawn }}
                               >
-                                ₹{(item.price * item.quantity).toFixed(2)}
+                                {formatPrice((item.price * item.quantity))}
                               </p>
                               <p className="text-xs text-gray-500">
-                                ₹{item.price} each
+                                {formatPrice(item.price)} each
                               </p>
                             </div>
                           </div>
@@ -207,12 +208,12 @@ export default function CartPage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>₹{total.toFixed(2)}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping</span>
                     <span>
-                      {shippingCost === 0 ? "Free" : `₹${shippingCost}`}
+                      {shippingCost === 0 ? "Free" : formatPrice(shippingCost)}
                     </span>
                   </div>
                   {total > 999 && (
@@ -224,7 +225,7 @@ export default function CartPage() {
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Total</span>
                     <span style={{ color: colors.brand.goldenDawn }}>
-                      ₹{finalTotal.toFixed(2)}
+                      {formatPrice(finalTotal)}
                     </span>
                   </div>
 
@@ -244,7 +245,7 @@ export default function CartPage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Truck className="h-5 w-5 text-green-600" />
-                      <span className="text-sm">Free shipping over ₹999</span>
+                      <span className="text-sm">Free shipping over {formatPrice(999)}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <RotateCcw className="h-5 w-5 text-blue-600" />

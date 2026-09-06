@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart'
 import { colors } from '@/styles/colors'
 import Link from 'next/link'
 import { useState, useEffect } from "react";
+import { formatPrice } from "@/lib/currency";
 
 export const CartSidebar = () => {
   const { items, total, itemCount, isOpen, closeCart, updateQuantity, removeFromCart } = useCart()
@@ -151,7 +152,7 @@ export const CartSidebar = () => {
                                 className="font-semibold text-sm"
                                 style={{ color: colors.brand.goldenDawn }}
                               >
-                                ₹{(item.price * item.quantity).toFixed(2)}
+                                {formatPrice((item.price * item.quantity))}
                               </span>
 
                               {/* Quantity Controls */}
@@ -197,7 +198,7 @@ export const CartSidebar = () => {
                             </div>
                             {item.quantity > 1 && (
                               <p className="text-xs text-gray-400 mt-1">
-                                ₹{item.price.toFixed(2)} each
+                                {formatPrice(item.price)} each
                               </p>
                             )}
                           </div>
@@ -217,7 +218,7 @@ export const CartSidebar = () => {
                       className="text-xl font-bold"
                       style={{ color: colors.brand.goldenDawn }}
                     >
-                      ₹{total.toFixed(2)}
+                      {formatPrice(total)}
                     </span>
                   </div>
 

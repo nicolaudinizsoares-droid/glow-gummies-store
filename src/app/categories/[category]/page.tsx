@@ -25,6 +25,7 @@ import { colors } from "@/styles/colors";
 import { getProductsByCategory, type Product } from "@/lib/products";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { formatPrice } from "@/lib/currency";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -133,11 +134,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <div className="flex items-center gap-2">
               {product.pricing.discount_percentage > 0 && (
                 <span className="text-sm text-gray-500 line-through">
-                  ₹{product.pricing.mrp}
+                  {formatPrice(product.pricing.mrp)}
                 </span>
               )}
               <span className="text-lg font-bold text-gray-900">
-                ₹{product.pricing.selling_price}
+                {formatPrice(product.pricing.selling_price)}
               </span>
               {product.pricing.discount_percentage > 0 && (
                 <Badge
