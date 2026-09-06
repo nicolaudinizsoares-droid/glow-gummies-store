@@ -164,10 +164,11 @@
       ]
     },
     "images": {
-      "primary": "/products/glow-hsn-bottle.png",
+      "primary": "/products/glow-bottle.png",
       "gallery": [
-        "/products/glow-hsn-bottle.png",
-        "/products/glow-hsn-lifestyle.png"
+        "/products/glow-bottle.png",
+        "/products/glow-bottle-body.png",
+        "/products/glow-poster.png"
       ]
     },
     "usage_instructions": "Take two gummies daily. Chew thoroughly before swallowing. Do not exceed the recommended dose.",
