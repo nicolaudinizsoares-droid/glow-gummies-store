@@ -139,13 +139,13 @@ export const Hero = () => {
 
           {/* Bottle, with the cap anchored to its own neck so the two stay
               related at any viewport width. */}
-          <div className="relative" style={{ width: "clamp(150px, 19vw, 250px)" }}>
+          <div className="relative" style={{ width: "clamp(130px, 16vw, 210px)" }}>
             {/* Cap: resting position is lifted clear and tilted. */}
             <div
               className="absolute left-1/2 z-10"
               style={{
-                width: "46%",
-                top: "-18%",
+                width: "52%",
+                top: "-15%",
                 transform: "translateX(-50%) translateY(-14%) rotate(-12deg)",
               }}
             >
@@ -154,8 +154,8 @@ export const Hero = () => {
                   src={PRODUCT_ASSETS.cap}
                   variant="cap"
                   alt=""
-                  width={240}
-                  height={160}
+                  width={480}
+                  height={320}
                   className="w-full h-auto object-contain drop-shadow-[0_8px_14px_rgba(10,29,54,0.16)]"
                 />
               </div>
@@ -166,7 +166,7 @@ export const Hero = () => {
                 src={PRODUCT_ASSETS.bottleBody}
                 alt="Glow Hair, Skin & Nails gummies"
                 width={680}
-                height={900}
+                height={1360}
                 priority
                 className="w-full h-auto object-contain drop-shadow-[0_30px_40px_rgba(10,29,54,0.18)]"
               />
