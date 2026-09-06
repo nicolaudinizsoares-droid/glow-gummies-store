@@ -10,6 +10,7 @@ PNGs nobody can reproduce.
 | `label-wrap.mjs` | The wrap-around label texture, read from `products.json` |
 | `render.mjs` | The gummy cut-outs |
 | `og-card.mjs` | `glow-og.jpg`, the 1200x630 social share card |
+| `relabel.mjs` | Corrects the net weight printed on the label in the photography |
 
 Run with `node <script>.mjs`. They need Playwright, which is **not** a
 dependency of this repo -- these are one-off asset builders, not part of
@@ -31,6 +32,29 @@ The label texture reads from `src/data/products.json`, so changing the
 Supplement Facts, serving size or allergens there and re-running `spin3d.mjs`
 produces a bottle whose printed panels match the site. Nothing is hardcoded
 twice.
+
+## The net weight on the photographed label
+
+The photography was shot against pre-production packaging. Two shots read
+`10.1 oz (286 g)` and the in-hand shot read `10.58 oz (300 g)`; the product is
+`6.56 oz (186 g)`. Net weight is a required declaration, so a bottle on the
+page cannot show a figure the page contradicts.
+
+`relabel.mjs` rebuilds the label stock under that line and typesets the
+correct figure back, working on the full-resolution originals so one pass
+propagates through every crop. Run it before the crop pipeline:
+
+    node relabel.mjs relabel-jobs.json <dir-with-originals>
+
+It does not work on every shot, and the failure is visible rather than silent.
+The in-hand shot has only four clean pixel rows between the flavour line and
+the net weight -- not enough label to rebuild from -- so it was dropped from
+the site instead of retouched badly. Measure the gap before assuming a shot is
+workable; `squeeze` values that disagree across a set mean the geometry is off.
+
+**This corrects imagery, not packaging.** If bottles are shipping with the old
+declaration printed on them, that is a labelling problem and new labels are
+the fix.
 
 ## What photography has already replaced
 

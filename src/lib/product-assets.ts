@@ -26,7 +26,14 @@ export const PRODUCT_ASSETS = {
   hero2: "/products/glow-hero-2.jpg",
   hero2Mobile: "/products/glow-hero-2-mobile.jpg",
   /**
-   * Finished product photography, for the gallery. Unlike the layers above
+   * Finished product photography, for the gallery.
+   *
+   * The in-hand shot that used to sit here is gone. Its label reads
+   * 10.58 oz (300 g) -- a third figure again -- and the bottle is held at
+   * enough of a tilt that only four clean pixels separate the flavour line
+   * from the net weight, which is not enough label stock to rebuild from. A
+   * visible retouch would have been worse than the wrong number, so the shot
+   * came out rather than shipping a figure the product data contradicts. Unlike the layers above
    * these keep their own backgrounds -- they are shot, not composited -- and
    * are cropped to one 4:5 frame so the gallery does not jump between shots.
    */
@@ -35,8 +42,6 @@ export const PRODUCT_ASSETS = {
     fruit: "/products/glow-photo-fruit.jpg",
     /** Cap off, gummies spilled onto marble. */
     open: "/products/glow-photo-open.jpg",
-    /** Held in hand, for scale. */
-    hand: "/products/glow-photo-hand.jpg",
     /** Skin close-up. No product in frame. */
     skin: "/products/glow-photo-skin.jpg",
   },

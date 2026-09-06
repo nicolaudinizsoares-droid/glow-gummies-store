@@ -95,8 +95,8 @@ export const TheProduct = () => (
       <Reveal className="order-1 md:order-2" distance={40}>
         <div className="relative aspect-[4/5] w-full max-w-[440px] mx-auto overflow-hidden">
           <ProductImage
-            src={PRODUCT_ASSETS.photos.hand}
-            alt={`${product.name}, ${product.flavor}`}
+            src={PRODUCT_ASSETS.photos.skin}
+            alt="Skin in soft daylight"
             width={1200}
             height={1500}
             className="h-full w-full object-cover"

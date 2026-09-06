@@ -1,0 +1,28 @@
+[
+  {
+    "src": "fruit.png",
+    "out": "fruit-fixed.png",
+    "box": [0.45, 0.7515, 0.25, 0.0175],
+    "pad": 12,
+    "weight": 600,
+    "text": "NET WT. 6.56oz (186g)  |  60 GUMMIES"
+  },
+  {
+    "src": "open.png",
+    "out": "open-fixed.png",
+    "box": [0.382, 0.6133, 0.208, 0.0132],
+    "pad": 3,
+    "fill": "above",
+    "weight": 600,
+    "text": "NET WT. 6.56oz (186g)  |  60 GUMMIES",
+    "geom": {
+      "cx": 0.48496,
+      "baseY": 0.626911,
+      "halfWidth": 0.106,
+      "angleDeg": 0.4,
+      "cap": 17,
+      "vTop": -27,
+      "vBot": 5
+    }
+  }
+]
