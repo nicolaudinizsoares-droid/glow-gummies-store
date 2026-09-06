@@ -46,7 +46,7 @@ export const TheProduct = () => (
           ].map(([label, value]) => (
             <div key={label}>
               <dt
-                className="text-[0.6875rem] uppercase tracking-[0.15em] mb-1"
+                className="text-xs uppercase tracking-[0.15em] mb-1"
                 style={{ color: semantic.text.muted }}
               >
                 {label}
@@ -69,7 +69,7 @@ export const TheProduct = () => (
             {formatPrice(product.pricing.mrp)}
           </span>
           <span
-            className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] px-2 py-1"
+            className="text-xs font-semibold uppercase tracking-[0.12em] px-2 py-1"
             style={{
               backgroundColor: semantic.accent.primary,
               color: semantic.text.onAccent,

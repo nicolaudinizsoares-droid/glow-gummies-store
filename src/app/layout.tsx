@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, Pacifico, Geist_Mono } from "next/font/google"
 import "./globals.css";
 import { Providers } from "@/lib/providers";
 import { CartSidebar } from "@/components/cart-sidebar";
+import { SITE_URL, SITE_NAME } from "@/lib/site";
 
 // Body copy
 const inter = Inter({
@@ -28,10 +29,33 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const DESCRIPTION =
+  "Daily beauty gummies for hair, skin and nails. Passion fruit flavor, two gummies a day. Non-GMO, gluten free and made in the USA.";
+
 export const metadata: Metadata = {
-  title: "Glow - Be Ready to Glow",
-  description:
-    "Daily beauty gummies for hair, skin and nails. Passion fruit flavor, two gummies a day. Non-GMO, gluten free and made in the USA.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Glow — Be Ready to Glow",
+    template: "%s | Glow",
+  },
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: "Glow — Be Ready to Glow",
+    description: DESCRIPTION,
+    url: SITE_URL,
+    images: [{ url: "/products/glow-poster.png", width: 2048, height: 3072, alt: "Glow Hair, Skin & Nails gummies" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Glow — Be Ready to Glow",
+    description: DESCRIPTION,
+    images: ["/products/glow-poster.png"],
+  },
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

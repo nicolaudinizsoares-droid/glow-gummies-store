@@ -147,7 +147,7 @@ export default function CartPage() {
                 }}
               >
                 <h2
-                  className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] mb-6"
+                  className="text-xs font-semibold uppercase tracking-[0.2em] mb-6"
                   style={{ color: semantic.text.primary }}
                 >
                   Summary

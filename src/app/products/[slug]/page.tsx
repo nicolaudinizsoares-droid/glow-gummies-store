@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductDetail } from "@/components/product-detail";
 import { getProductBySlug, products } from "@/lib/products";
 import { CURRENCY } from "@/lib/currency";
+import { SITE_URL } from "@/lib/site";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,10 +23,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: product.seo.meta_title,
     description: product.seo.meta_description,
     keywords: product.seo.keywords,
+    alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
       title: product.seo.meta_title,
       description: product.seo.meta_description,
       type: "website",
+      url: `${SITE_URL}/products/${product.slug}`,
       images: [{ url: product.images.primary, alt: product.name }],
     },
   };
@@ -45,10 +48,11 @@ export default async function ProductPage({ params }: PageProps) {
     name: product.name,
     description: product.short_description,
     sku: product.sku,
-    image: [product.images.primary],
+    image: [`${SITE_URL}${product.images.primary}`],
     brand: { "@type": "Brand", name: "Glow" },
     offers: {
       "@type": "Offer",
+      url: `${SITE_URL}/products/${product.slug}`,
       price: product.pricing.selling_price.toFixed(2),
       priceCurrency: CURRENCY,
       availability:

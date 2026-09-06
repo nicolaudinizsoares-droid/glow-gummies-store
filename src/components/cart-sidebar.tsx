@@ -59,7 +59,7 @@ export const CartSidebar = () => {
               style={{ borderBottom: `1px solid ${semantic.border.subtle}` }}
             >
               <h2
-                className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em]"
+                className="text-xs font-semibold uppercase tracking-[0.2em]"
                 style={{ color: semantic.text.primary }}
               >
                 Your bag {items.length > 0 && `(${items.length})`}

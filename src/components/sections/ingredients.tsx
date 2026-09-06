@@ -64,7 +64,7 @@ export const Ingredients = () => {
                 {row.amount}
               </p>
               <p
-                className="text-[0.6875rem] uppercase tracking-[0.12em]"
+                className="text-xs uppercase tracking-[0.12em]"
                 style={{ color: semantic.text.muted }}
               >
                 {row.name.replace(/\s*\(.*\)$/, "")}
@@ -134,7 +134,7 @@ export const Ingredients = () => {
 
             <Link
               href="/ingredients"
-              className="inline-block mt-6 text-sm underline underline-offset-4"
+              className="inline-block mt-5 py-2 text-sm underline underline-offset-4"
               style={{ color: semantic.text.primary }}
             >
               Full ingredient information

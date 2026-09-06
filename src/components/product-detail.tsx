@@ -59,11 +59,11 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
         {/* Breadcrumb */}
         <nav className="px-6 md:px-8 pt-6" aria-label="Breadcrumb">
           <ol className="max-w-6xl mx-auto flex gap-2 text-xs" style={{ color: semantic.text.muted }}>
-            <li><Link href="/" className="hover:underline">Home</Link></li>
-            <li aria-hidden="true">/</li>
-            <li><Link href="/products" className="hover:underline">Shop</Link></li>
-            <li aria-hidden="true">/</li>
-            <li style={{ color: semantic.text.primary }}>{product.name}</li>
+            <li><Link href="/" className="inline-block py-2 hover:underline">Home</Link></li>
+            <li aria-hidden="true" className="py-2">/</li>
+            <li><Link href="/products" className="inline-block py-2 hover:underline">Shop</Link></li>
+            <li aria-hidden="true" className="py-2">/</li>
+            <li className="py-2" style={{ color: semantic.text.primary }}>{product.name}</li>
           </ol>
         </nav>
 
@@ -134,7 +134,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                   {formatPrice(product.pricing.mrp)}
                 </span>
                 <span
-                  className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] px-2 py-1"
+                  className="text-xs font-semibold uppercase tracking-[0.12em] px-2 py-1"
                   style={{ backgroundColor: semantic.accent.primary, color: semantic.text.onAccent }}
                 >
                   Save {formatPrice(saving)}
@@ -148,7 +148,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               {/* Quantity */}
               <div className="flex items-center gap-4 mb-5">
                 <span
-                  className="text-[0.6875rem] uppercase tracking-[0.15em]"
+                  className="text-xs uppercase tracking-[0.15em]"
                   style={{ color: semantic.text.muted }}
                 >
                   Quantity
@@ -227,7 +227,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                 ["Net weight", product.net_weight],
               ].map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-[0.6875rem] uppercase tracking-[0.15em] mb-1" style={{ color: semantic.text.muted }}>
+                  <dt className="text-xs uppercase tracking-[0.15em] mb-1" style={{ color: semantic.text.muted }}>
                     {k}
                   </dt>
                   <dd className="text-sm font-medium" style={{ color: semantic.text.primary }}>{v}</dd>
@@ -289,8 +289,12 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               <div key={title}>
                 <Icon className="w-5 h-5 mb-3" style={{ color: semantic.accent.metallic }} />
                 <h3 className="text-base font-semibold mb-1.5" style={{ color: semantic.text.primary }}>{title}</h3>
-                <p className="text-sm mb-3" style={{ color: semantic.text.secondary }}>{copy}</p>
-                <Link href={href} className="text-sm underline underline-offset-4" style={{ color: semantic.text.primary }}>
+                <p className="text-sm mb-1" style={{ color: semantic.text.secondary }}>{copy}</p>
+                <Link
+                  href={href}
+                  className="inline-block py-2 text-sm underline underline-offset-4"
+                  style={{ color: semantic.text.primary }}
+                >
                   {cta}
                 </Link>
               </div>
@@ -311,7 +315,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
           <p className="text-base font-semibold leading-none" style={{ color: semantic.text.primary }}>
             {formatPrice(price * quantity)}
           </p>
-          <p className="text-[0.6875rem] mt-1" style={{ color: semantic.text.muted }}>
+          <p className="text-xs mt-1" style={{ color: semantic.text.muted }}>
             {quantity} × {product.serving.gummy_count} gummies
           </p>
         </div>

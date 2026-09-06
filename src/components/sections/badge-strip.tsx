@@ -34,7 +34,7 @@ export const BadgeStrip = () => (
               aria-hidden="true"
             />
             <span
-              className="text-[0.625rem] sm:text-[0.6875rem] font-semibold uppercase tracking-[0.15em] text-center"
+              className="text-xs font-semibold uppercase tracking-[0.1em] sm:tracking-[0.15em] text-center"
               style={{ color: semantic.text.primary }}
             >
               {badge}

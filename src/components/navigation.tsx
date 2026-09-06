@@ -66,7 +66,7 @@ export const Navigation = () => {
         className="max-w-7xl mx-auto px-5 md:px-8 h-16 md:h-20 flex items-center justify-between"
         aria-label="Main"
       >
-        <Link href="/" aria-label="Glow home" className="shrink-0">
+        <Link href="/" aria-label="Glow home" className="shrink-0 py-2 -my-2">
           <GlowLogo size={28} />
         </Link>
 

@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/lib/store'
 import { addToCart, removeFromCart, updateQuantity, clearCart, toggleCart, openCart, closeCart } from '@/lib/features/cartSlice'
+import { track } from '@/lib/analytics'
 
 export const useCart = () => {
   const dispatch = useDispatch()
@@ -22,6 +23,14 @@ export const useCart = () => {
       productId: product.id, // Store original product ID
     }
     dispatch(addToCart(cartProduct))
+
+    track({
+      name: 'add_to_cart',
+      id: product.id,
+      item: product.name,
+      quantity: product.quantity ?? 1,
+      value: product.price * (product.quantity ?? 1),
+    })
     
     // Auto-open cart sidebar for immediate feedback (Amazon-style)
     setTimeout(() => {
@@ -30,7 +39,18 @@ export const useCart = () => {
   }
 
   const handleRemoveFromCart = (id: string) => {
+    const item = cart.items.find(i => i.id === id)
     dispatch(removeFromCart(id))
+
+    if (item) {
+      track({
+        name: 'remove_from_cart',
+        id: item.productId,
+        item: item.name,
+        quantity: item.quantity,
+        value: item.price * item.quantity,
+      })
+    }
   }
 
   const handleUpdateQuantity = (id: string, quantity: number) => {

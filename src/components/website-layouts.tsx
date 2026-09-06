@@ -64,7 +64,7 @@ export const Footer = () => (
                 key={label}
                 href="#"
                 aria-label={`Glow on ${label}`}
-                className="p-2 rounded-full transition-colors hover:bg-black/5"
+                className="p-2.5 rounded-full transition-colors hover:bg-black/5"
               >
                 <Icon className="w-4 h-4" style={{ color: semantic.text.primary }} />
               </a>
@@ -80,12 +80,12 @@ export const Footer = () => (
             >
               {column.heading}
             </h2>
-            <ul className="space-y-2.5">
+            <ul>
               {column.links.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm transition-opacity hover:opacity-60"
+                    className="inline-block py-2 text-sm transition-opacity hover:opacity-60"
                     style={{ color: semantic.text.secondary }}
                   >
                     {link.name}
