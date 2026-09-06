@@ -1,246 +1,228 @@
-'use client'
+// Slide-over cart.
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Minus, Plus, ShoppingBag, Trash2, CheckCircle } from "lucide-react";
-import { Button } from '@/components/ui/button'
-import { useCart } from '@/hooks/useCart'
-import { colors } from '@/styles/colors'
-import Link from 'next/link'
-import { useState, useEffect } from "react";
+"use client";
+
+import { useEffect } from "react";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { X, Minus, Plus, Trash2 } from "lucide-react";
+
+import { ProductImage } from "@/components/product-image";
+import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/currency";
+import { calculateShipping } from "@/lib/shipping";
+import { semantic } from "@/styles/tokens";
 
 export const CartSidebar = () => {
-  const { items, total, itemCount, isOpen, closeCart, updateQuantity, removeFromCart } = useCart()
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [lastItemCount, setLastItemCount] = useState(itemCount);
+  const { items, total, isOpen, closeCart, updateQuantity, removeFromCart } = useCart();
+  const shipping = calculateShipping(total);
 
-  // Show success animation when items are added
   useEffect(() => {
-    if (itemCount > lastItemCount && isOpen) {
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 2000);
-    }
-    setLastItemCount(itemCount);
-  }, [itemCount, lastItemCount, isOpen]);
+    if (!isOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeCart();
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen, closeCart]);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            transition={{ duration: 0.2 }}
             onClick={closeCart}
+            className="fixed inset-0 z-50"
+            style={{ backgroundColor: "rgba(10, 29, 54, 0.35)" }}
+            aria-hidden="true"
           />
-
-          {/* Cart Sidebar */}
-          <motion.div
+          <motion.aside
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white/90 backdrop-blur-xl border-l border-white/20 shadow-2xl z-50"
+            transition={{ type: "tween", duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-[400px] flex flex-col"
+            style={{ backgroundColor: semantic.surface.page }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Shopping cart"
           >
-            <div className="flex flex-col h-full">
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/20">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag
-                    className="w-5 h-5"
-                    style={{ color: colors.brand.goldenDawn }}
-                  />
-                  <h2 className="text-lg font-semibold">Shopping Cart</h2>
-                  {itemCount > 0 && (
-                    <span
-                      className="text-white text-xs px-2 py-1 rounded-full"
-                      style={{ backgroundColor: colors.brand.goldenDawn }}
-                    >
-                      {itemCount}
-                    </span>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
+            <header
+              className="flex items-center justify-between px-6 h-16 shrink-0"
+              style={{ borderBottom: `1px solid ${semantic.border.subtle}` }}
+            >
+              <h2
+                className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em]"
+                style={{ color: semantic.text.primary }}
+              >
+                Your bag {items.length > 0 && `(${items.length})`}
+              </h2>
+              <button
+                onClick={closeCart}
+                aria-label="Close cart"
+                className="p-2 -mr-2 rounded-full transition-colors hover:bg-black/5"
+              >
+                <X className="w-4 h-4" style={{ color: semantic.text.primary }} />
+              </button>
+            </header>
+
+            {items.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+                <p className="text-base mb-6" style={{ color: semantic.text.secondary }}>
+                  Your bag is empty.
+                </p>
+                <Link
+                  href="/products"
                   onClick={closeCart}
-                  className="h-8 w-8 p-0 hover:bg-white/20"
+                  className="px-8 py-3.5 text-[0.75rem] tracking-[0.18em] uppercase font-semibold"
+                  style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
                 >
-                  <X className="w-4 h-4" />
-                </Button>
+                  Shop Glow
+                </Link>
               </div>
-
-              {/* Success Message */}
-              <AnimatePresence>
-                {showSuccess && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="mx-6 mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2"
-                  >
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-sm text-green-800">
-                      Item added to cart!
-                    </span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Cart Items */}
-              <div className="flex-1 overflow-y-auto p-6">
-                {items.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center">
-                    <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      Your cart is empty
-                    </h3>
-                    <p className="text-gray-500 mb-6">
-                      Add some products to get started
-                    </p>
-                    <Button
-                      onClick={closeCart}
-                      className="glass-morphism hover:glass-morphism-hover"
-                      style={{ backgroundColor: colors.brand.goldenDawn }}
-                    >
-                      Continue Shopping
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
+            ) : (
+              <>
+                <ul className="flex-1 overflow-y-auto px-6 py-5">
+                  <AnimatePresence initial={false}>
                     {items.map((item) => (
-                      <motion.div
+                      <motion.li
                         key={item.id}
                         layout
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="glass-morphism p-4 rounded-xl"
+                        exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                        transition={{ duration: 0.22 }}
+                        className="flex gap-4 pb-5 mb-5 overflow-hidden"
+                        style={{ borderBottom: `1px solid ${semantic.border.subtle}` }}
                       >
-                        <div className="flex gap-4">
-                          {/* Product Image */}
-                          <div className="w-16 h-16 bg-gradient-to-br from-sage-green/20 to-soft-sand-beige/20 rounded-lg flex-shrink-0 flex items-center justify-center">
-                            {item.image ? (
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-full h-full object-cover rounded-lg"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = "none";
-                                }}
-                              />
-                            ) : (
-                              <div className="text-xs text-gray-400 text-center px-1">
-                                No Image
-                              </div>
-                            )}
-                          </div>
+                        <div
+                          className="w-20 h-20 shrink-0 flex items-center justify-center"
+                          style={{ backgroundColor: semantic.surface.sunken }}
+                        >
+                          <ProductImage
+                            src={item.image}
+                            alt={item.name}
+                            width={160}
+                            height={160}
+                            className="h-16 w-auto object-contain"
+                          />
+                        </div>
 
-                          <div className="flex-1">
-                            <h4 className="font-medium text-sm mb-1 line-clamp-2">
-                              {item.name}
-                            </h4>
-                            <p className="text-xs text-gray-500 mb-1">
-                              {item.size && `Size: ${item.size}`}
-                              {item.sku && ` • SKU: ${item.sku}`}
-                            </p>
-                            <div className="flex items-center justify-between">
-                              <span
-                                className="font-semibold text-sm"
-                                style={{ color: colors.brand.goldenDawn }}
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className="text-sm font-medium leading-snug mb-0.5"
+                            style={{ color: semantic.text.primary }}
+                          >
+                            {item.name}
+                          </p>
+                          <p className="text-xs mb-3" style={{ color: semantic.text.muted }}>
+                            {item.size}
+                          </p>
+
+                          <div className="flex items-center justify-between gap-2">
+                            <div
+                              className="flex items-center"
+                              style={{ border: `1px solid ${semantic.border.default}` }}
+                            >
+                              <button
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                aria-label={`Decrease quantity of ${item.name}`}
+                                className="px-2 py-1.5"
                               >
-                                {formatPrice((item.price * item.quantity))}
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-7 text-center text-xs tabular-nums">
+                                {item.quantity}
                               </span>
-
-                              {/* Quantity Controls */}
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 glass-morphism hover:glass-morphism-hover"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.id,
-                                      Math.max(0, item.quantity - 1)
-                                    )
-                                  }
-                                  disabled={item.quantity <= 1}
-                                >
-                                  <Minus className="w-3 h-3" />
-                                </Button>
-                                <span className="w-8 text-center text-sm font-medium min-w-[2rem]">
-                                  {item.quantity}
-                                </span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 glass-morphism hover:glass-morphism-hover"
-                                  onClick={() =>
-                                    updateQuantity(item.id, item.quantity + 1)
-                                  }
-                                  disabled={item.quantity >= 99} // Amazon-style quantity limit
-                                >
-                                  <Plus className="w-3 h-3" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 ml-1 text-red-500 hover:bg-red-50"
-                                  onClick={() => removeFromCart(item.id)}
-                                  title="Remove item"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                </Button>
-                              </div>
+                              <button
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                aria-label={`Increase quantity of ${item.name}`}
+                                className="px-2 py-1.5"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
                             </div>
-                            {item.quantity > 1 && (
-                              <p className="text-xs text-gray-400 mt-1">
-                                {formatPrice(item.price)} each
-                              </p>
-                            )}
+
+                            <div className="flex items-center gap-3">
+                              <span
+                                className="text-sm font-medium tabular-nums"
+                                style={{ color: semantic.text.primary }}
+                              >
+                                {formatPrice(item.price * item.quantity)}
+                              </span>
+                              <button
+                                onClick={() => removeFromCart(item.id)}
+                                aria-label={`Remove ${item.name}`}
+                                className="p-1 transition-opacity hover:opacity-60"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" style={{ color: semantic.text.muted }} />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </motion.div>
+                      </motion.li>
                     ))}
-                  </div>
-                )}
-              </div>
+                  </AnimatePresence>
+                </ul>
 
-              {/* Footer */}
-              {items.length > 0 && (
-                <div className="border-t border-white/20 p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-lg font-semibold">Total:</span>
-                    <span
-                      className="text-xl font-bold"
-                      style={{ color: colors.brand.goldenDawn }}
+                <footer
+                  className="px-6 py-5 shrink-0"
+                  style={{ borderTop: `1px solid ${semantic.border.subtle}` }}
+                >
+                  <dl className="space-y-2 mb-5 text-sm">
+                    <div className="flex justify-between">
+                      <dt style={{ color: semantic.text.secondary }}>Subtotal</dt>
+                      <dd className="tabular-nums" style={{ color: semantic.text.primary }}>
+                        {formatPrice(total)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt style={{ color: semantic.text.secondary }}>Shipping</dt>
+                      <dd style={{ color: semantic.text.secondary }}>
+                        {shipping.cost === null
+                          ? shipping.label
+                          : shipping.cost === 0
+                            ? "Free"
+                            : formatPrice(shipping.cost)}
+                      </dd>
+                    </div>
+                    <div
+                      className="flex justify-between pt-3 text-base"
+                      style={{ borderTop: `1px solid ${semantic.border.subtle}` }}
                     >
-                      {formatPrice(total)}
-                    </span>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Link href="/cart" onClick={closeCart}>
-                      <Button
-                        className="w-full glass-morphism hover:glass-morphism-hover"
-                        style={{ backgroundColor: colors.brand.goldenDawn }}
+                      <dt className="font-medium" style={{ color: semantic.text.primary }}>
+                        Total
+                      </dt>
+                      <dd
+                        className="font-[family-name:var(--font-playfair)] text-xl tabular-nums"
+                        style={{ color: semantic.text.primary }}
                       >
-                        View Cart
-                      </Button>
-                    </Link>
-                    <Button className="w-full glass-morphism hover:glass-morphism-hover bg-sage-green text-white">
-                      Checkout
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
+                        {formatPrice(total + (shipping.cost ?? 0))}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <Link
+                    href="/cart"
+                    onClick={closeCart}
+                    className="block w-full py-4 text-center text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
+                  >
+                    View bag
+                  </Link>
+                </footer>
+              </>
+            )}
+          </motion.aside>
         </>
       )}
     </AnimatePresence>
   );
-}
+};

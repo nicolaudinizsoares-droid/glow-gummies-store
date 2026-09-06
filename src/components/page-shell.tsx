@@ -15,7 +15,10 @@ export const PageShell = ({
 }) => (
   <div className="min-h-screen" style={{ backgroundColor: colors.brand.offWhite }}>
     <Navigation />
-    <header className="px-4 pt-16 pb-10" style={{ background: colors.gradients.hero }}>
+    <header
+      className="px-6 md:px-8 pt-32 md:pt-40 pb-12"
+      style={{ background: colors.gradients.hero }}
+    >
       <div className="max-w-3xl mx-auto">
         <h1
           className="font-[family-name:var(--font-playfair)] text-4xl md:text-5xl mb-3"
@@ -30,7 +33,7 @@ export const PageShell = ({
         )}
       </div>
     </header>
-    <main className="px-4 py-14">
+    <main className="px-6 md:px-8 py-14">
       <div
         className="max-w-3xl mx-auto space-y-8 leading-relaxed"
         style={{ color: colors.text.secondary }}
