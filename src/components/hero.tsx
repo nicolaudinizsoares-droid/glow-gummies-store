@@ -20,11 +20,33 @@
 
 import Link from "next/link";
 import { ProductImage } from "@/components/product-image";
+import { BottleSpin, hasSpinFrames } from "@/components/bottle-spin";
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
+import { useEffect, useState } from "react";
 import { useGsapEffect } from "@/lib/motion/use-gsap";
 import { semantic, motion as motionTokens } from "@/styles/tokens";
 
 export const Hero = () => {
+  const [spinProgress, setSpinProgress] = useState(0);
+
+  // When photographic turntable frames exist they replace the layered still:
+  // real photography of the real bottle beats any approximation of it. The
+  // scroll position that used to lift the cap now turns the bottle instead.
+  useEffect(() => {
+    if (!hasSpinFrames) return;
+    const el = document.querySelector<HTMLElement>("[data-hero-track]");
+    if (!el) return;
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      const travelled = -rect.top;
+      const distance = rect.height - window.innerHeight;
+      setSpinProgress(distance > 0 ? Math.min(1, Math.max(0, travelled / distance)) : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const scopeRef = useGsapEffect((gsap, scope) => {
     const stage = scope.querySelector<HTMLElement>("[data-stage]");
     const cap = scope.querySelector<HTMLElement>("[data-cap]");
@@ -94,6 +116,7 @@ export const Hero = () => {
   return (
     <section
       ref={scopeRef as React.RefObject<HTMLDivElement>}
+      data-hero-track
       className="relative h-[300vh]"
       aria-label="Glow Gummies"
     >
@@ -139,8 +162,20 @@ export const Hero = () => {
             ))}
           </div>
 
-          {/* Bottle, with the cap anchored to its own neck so the two stay
-              related at any viewport width. */}
+          {hasSpinFrames ? (
+            /* Constrained to the same footprint as the still it replaces, so
+               the product never grows into the copy block below. */
+            <div style={{ width: "clamp(190px, 24vw, 340px)" }}>
+              <BottleSpin
+                alt="Glow Hair, Skin & Nails gummies"
+                progress={spinProgress}
+                priority
+                className="w-full drop-shadow-[0_30px_40px_rgba(10,29,54,0.18)]"
+              />
+            </div>
+          ) : (
+          /* Bottle, with the cap anchored to its own neck so the two stay
+             related at any viewport width. */
           <div
             data-product
             className="relative"
@@ -178,6 +213,7 @@ export const Hero = () => {
               />
             </div>
           </div>
+          )}
         </div>
 
         {/* Copy */}

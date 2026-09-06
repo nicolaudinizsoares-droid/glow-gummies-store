@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "node scripts/check-assets.mjs && next build --turbopack",
+    "build": "node scripts/check-assets.mjs && node scripts/build-spin-manifest.mjs && next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "check:assets": "node scripts/check-assets.mjs"
+    "check:assets": "node scripts/check-assets.mjs",
+    "build:spin": "node scripts/build-spin-manifest.mjs"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
