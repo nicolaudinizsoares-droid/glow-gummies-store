@@ -239,6 +239,45 @@
  * Respect the OS reduced-motion setting. GSAP timelines check this too, but
  * this catches CSS transitions and any animation added later.
  */
+/*
+ * Hero entrance.
+ *
+ * In CSS, not JavaScript, so it runs on the first paint. A JS-driven entrance
+ * cannot start until hydration, and a hook that reports the reduced-motion
+ * preference only after mount is too late to set a starting frame: the
+ * animation either never runs, or snaps the copy backwards once it does.
+ * Stagger by setting --hero-delay on each element.
+ */
+.hero-rise {
+  opacity: 0;
+  animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--hero-delay, 0s)
+    forwards;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * The blanket rule below collapses animation duration but not delay, which
+ * would leave the hero copy invisible for the length of its stagger. Drop the
+ * animation outright instead.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

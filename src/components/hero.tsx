@@ -1,264 +1,136 @@
-// Hero: the bottle-opening sequence.
+// Hero.
 //
-// Structure is a tall scroll track with a pinned stage inside it. Scrolling
-// scrubs a GSAP timeline rather than playing it on a clock, so the visitor
-// controls the reveal:
+// The first screen has one job: say what this is and give the visitor
+// somewhere to go. So the headline, the proposition and both calls to action
+// are on screen the moment the page paints -- no scrolling required, and
+// nothing that depends on JavaScript having run.
 //
-//   0.00  bottle closed, centred
-//   0.20  camera pushes in
-//   0.40  cap begins to twist
-//   0.60  cap clears the bottle
-//   0.70  gummies rise
-//   1.00  final composition, copy and CTAs
+// It replaces a three-viewport scroll sequence that opened the bottle. That
+// version looked good in isolation but read badly as a shop front: a visitor
+// landed on a bottle floating on a gradient with no words anywhere, and had to
+// scroll roughly two and a half screens before the headline and the Shop
+// button resolved -- long after most people decide whether to stay.
 //
-// Reduced motion, or a device that cannot carry it, gets the final composition
-// immediately as plain markup. That is why the static state below is authored
-// as the *finished* frame, never as the "before" -- if the timeline never runs,
-// what is already on screen is correct.
-
-"use client";
+// The photograph is the real product, which is also why the composited
+// cap-and-body layers are gone: they only existed so the cap could lift away.
 
 import Link from "next/link";
-import { ProductImage } from "@/components/product-image";
-import { BottleSpin, hasSpinFrames } from "@/components/bottle-spin";
+import Image from "next/image";
+import type { CSSProperties } from "react";
+
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
-import { useEffect, useState } from "react";
-import { useGsapEffect } from "@/lib/motion/use-gsap";
-import { semantic, motion as motionTokens } from "@/styles/tokens";
+import { getProductBySlug } from "@/lib/products";
+import { formatPrice } from "@/lib/currency";
+import { semantic } from "@/styles/tokens";
+
+const SLUG = "hair-skin-nails-gummies-passion-fruit";
+
+const CTA_BASE =
+  "w-full sm:w-auto px-8 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold text-center whitespace-nowrap";
+
+/**
+ * Stagger step for the copy's entrance. The animation itself is the .hero-rise
+ * class in globals.css; this only sets when each element starts.
+ */
+const rise = (delay: number) =>
+  ({ style: { "--hero-delay": `${delay}s` } as CSSProperties });
 
 export const Hero = () => {
-  const [spinProgress, setSpinProgress] = useState(0);
-
-  // When photographic turntable frames exist they replace the layered still:
-  // real photography of the real bottle beats any approximation of it. The
-  // scroll position that used to lift the cap now turns the bottle instead.
-  useEffect(() => {
-    if (!hasSpinFrames) return;
-    const el = document.querySelector<HTMLElement>("[data-hero-track]");
-    if (!el) return;
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      const travelled = -rect.top;
-      const distance = rect.height - window.innerHeight;
-      setSpinProgress(distance > 0 ? Math.min(1, Math.max(0, travelled / distance)) : 0);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scopeRef = useGsapEffect((gsap, scope) => {
-    const stage = scope.querySelector<HTMLElement>("[data-stage]");
-    const cap = scope.querySelector<HTMLElement>("[data-cap]");
-    const body = scope.querySelector<HTMLElement>("[data-bottle]");
-    const product = scope.querySelector<HTMLElement>("[data-product]");
-    const gummies = gsap.utils.toArray<HTMLElement>("[data-gummy]", scope);
-    const copy = gsap.utils.toArray<HTMLElement>("[data-copy]", scope);
-    if (!stage || !cap || !body || !product) return;
-
-    const timeline = gsap.timeline({
-      defaults: { ease: motionTokens.ease.cinematic },
-      scrollTrigger: {
-        trigger: scope,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1,
-        // No pin here: the stage is held by CSS position:sticky, which works
-        // without JavaScript and so survives reduced motion. Adding
-        // ScrollTrigger's pin on top of it made both fight for the same
-        // element and left a two-viewport gap once the pin released.
-      },
-    });
-
-    // Every tween is a fromTo landing on 0, because the resting frame is owned
-    // by CSS on the wrapper elements. Overlapping from() tweens on one property
-    // do not work here: from() renders immediately, so a second from() on the
-    // same property captures the first one's start as its destination and the
-    // element never reaches its real resting position.
-    timeline
-      // Camera push-in.
-      .fromTo(
-        product,
-        { scale: 0.92, yPercent: 4 },
-        { scale: 1, yPercent: 0, duration: 2 },
-        0
-      )
-      // Cap twists free and lifts clear.
-      .fromTo(
-        cap,
-        { yPercent: 104, rotate: 14 },
-        { yPercent: 0, rotate: 0, duration: 3 },
-        2
-      )
-      // Gummies rise out of the open bottle on staggered paths.
-      .fromTo(
-        gummies,
-        { y: 140, opacity: 0, scale: 0.6, rotate: -25 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          rotate: 0,
-          duration: 3,
-          stagger: motionTokens.stagger.loose,
-        },
-        3.5
-      )
-      // Copy resolves last, once the product has had the stage to itself.
-      .fromTo(
-        copy,
-        { y: 28, opacity: 0 },
-        { y: 0, opacity: 1, duration: 2, stagger: motionTokens.stagger.base },
-        5
-      );
-  });
+  // Price, count and duration come from the product data, never from a string
+  // typed here -- the whole point of the data file is that the site cannot
+  // quote a figure the packaging does not.
+  const product = getProductBySlug(SLUG);
 
   return (
     <section
-      ref={scopeRef as React.RefObject<HTMLDivElement>}
-      data-hero-track
-      className="relative h-[300vh]"
+      className="relative grid lg:grid-cols-2 lg:min-h-[calc(100vh-5rem)]"
       aria-label="Glow Gummies"
     >
-      <div
-        data-stage
-        className="sticky top-0 h-screen overflow-hidden flex items-center justify-center"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 50% 15%, #FFF6E6 0%, #FBE4CE 45%, #F6D3B8 100%)",
-        }}
-      >
-        {/* Product stage: upper area, clear of the copy block below. */}
-        <div className="absolute inset-x-0 top-16 md:top-20 bottom-[36%] md:bottom-[34%] flex items-center justify-center pt-14 md:pt-16">
-          {/* Gummies rising. Behind the bottle so they read as coming from it. */}
-          <div className="absolute inset-0 pointer-events-none">
-            {[
-              { left: "39%", top: "26%", size: 54, rotate: -14 },
-              { left: "57%", top: "17%", size: 44, rotate: 22 },
-              { left: "48%", top: "7%", size: 36, rotate: -6 },
-            ].map((g, i) => (
-              <div
-                key={i}
-                className="absolute"
-                style={{
-                  left: g.left,
-                  top: g.top,
-                  width: g.size,
-                  height: g.size,
-                  transform: `rotate(${g.rotate}deg)`,
-                }}
-              >
-                <div data-gummy className="w-full h-full">
-                  <ProductImage
-                    src={PRODUCT_ASSETS.gummies[i]}
-                    variant="gummy"
-                    alt=""
-                    width={g.size * 2}
-                    height={g.size * 2}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Photograph. Second in the source order so the headline is what a
+          screen reader and a search engine reach first, but painted first on
+          mobile via order-1. */}
+      <div className="relative order-1 lg:order-2 aspect-[6/5] lg:aspect-auto lg:min-h-[calc(100vh-5rem)]">
+        <Image
+          src={PRODUCT_ASSETS.heroMobile}
+          alt="A bottle of Glow Hair, Skin & Nails gummies on marble, beside a halved passion fruit"
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover lg:hidden"
+        />
+        <Image
+          src={PRODUCT_ASSETS.hero}
+          alt=""
+          fill
+          sizes="50vw"
+          priority
+          className="object-cover hidden lg:block"
+        />
+      </div>
 
-          {hasSpinFrames ? (
-            /* Constrained to the same footprint as the still it replaces, so
-               the product never grows into the copy block below. */
-            <div style={{ width: "clamp(190px, 24vw, 340px)" }}>
-              <BottleSpin
-                alt="Glow Hair, Skin & Nails gummies"
-                progress={spinProgress}
-                priority
-                className="w-full drop-shadow-[0_30px_40px_rgba(10,29,54,0.18)]"
-              />
-            </div>
-          ) : (
-          /* Bottle, with the cap anchored to its own neck so the two stay
-             related at any viewport width. */
-          <div
-            data-product
-            className="relative"
-            style={{ width: "clamp(155px, 19vw, 260px)" }}
+      {/* Copy */}
+      <div
+        className="order-2 lg:order-1 flex flex-col justify-center px-6 md:px-10 lg:px-16 xl:px-20 py-14 md:py-16 lg:py-20"
+        style={{ backgroundColor: semantic.surface.page }}
+      >
+        <div className="max-w-xl lg:ml-auto lg:mr-0 w-full">
+          <p className="hero-rise eyebrow mb-5" {...rise(0)}>
+            Hair, Skin &amp; Nails
+          </p>
+
+          <h1
+            {...rise(0.08)}
+            className="hero-rise text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.04] mb-5"
+            style={{ color: semantic.text.primary }}
           >
-            {/* Cap: resting position is lifted clear and tilted. */}
-            <div
-              className="absolute left-1/2 z-10"
+            Glow from within.
+          </h1>
+
+          <p
+            {...rise(0.16)}
+            className="hero-rise text-base md:text-lg leading-relaxed mb-8 max-w-md"
+            style={{ color: semantic.text.secondary }}
+          >
+            A daily beauty supplement for your hair, skin and nails — in a
+            passion fruit gummy you will actually look forward to. Two a day,
+            and the rest of your day is yours.
+          </p>
+
+          <div
+            {...rise(0.24)}
+            className="hero-rise flex flex-col sm:flex-row gap-3 mb-10"
+          >
+            <Link
+              href={`/products/${SLUG}`}
+              className={`${CTA_BASE} transition-opacity hover:opacity-90`}
               style={{
-                width: "49%",
-                top: "-13%",
-                transform: "translateX(-50%) rotate(-13deg)",
+                backgroundColor: semantic.text.primary,
+                color: semantic.text.inverse,
               }}
             >
-              <div data-cap>
-                <ProductImage
-                  src={PRODUCT_ASSETS.cap}
-                  variant="cap"
-                  alt=""
-                  width={480}
-                  height={320}
-                  className="w-full h-auto object-contain drop-shadow-[0_8px_14px_rgba(10,29,54,0.16)]"
-                />
-              </div>
-            </div>
-
-            <div data-bottle>
-              <ProductImage
-                src={PRODUCT_ASSETS.bottleBody}
-                alt="Glow Hair, Skin & Nails gummies"
-                width={680}
-                height={1360}
-                priority
-                className="w-full h-auto object-contain drop-shadow-[0_30px_40px_rgba(10,29,54,0.18)]"
-              />
-            </div>
+              Shop{product ? ` — ${formatPrice(product.pricing.selling_price)}` : ""}
+            </Link>
+            <Link
+              href="#the-glow"
+              className={`${CTA_BASE} border transition-colors`}
+              style={{
+                borderColor: semantic.text.primary,
+                color: semantic.text.primary,
+              }}
+            >
+              Discover More
+            </Link>
           </div>
-          )}
-        </div>
 
-        {/* Copy */}
-        <div className="absolute inset-x-0 bottom-0 h-[38%] md:h-[34%] flex flex-col justify-center px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1
-              data-copy
-              className="text-[clamp(2.75rem,7vw,6rem)] leading-[1.02] mb-4"
-              style={{ color: semantic.text.primary }}
-            >
-              Glow from within.
-            </h1>
-            <p
-              data-copy
-              className="text-base md:text-lg mb-8"
-              style={{ color: semantic.text.secondary }}
-            >
-              Your daily beauty ritual, made delicious.
-            </p>
-            <div
-              data-copy
-              className="flex flex-col sm:flex-row items-center justify-center gap-3"
-            >
-              <Link
-                href="/products/hair-skin-nails-gummies-passion-fruit"
-                className="w-full sm:w-auto px-8 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90"
-                style={{
-                  backgroundColor: semantic.text.primary,
-                  color: semantic.text.inverse,
-                }}
-              >
-                Shop Glow Gummies
-              </Link>
-              <Link
-                href="#the-glow"
-                className="w-full sm:w-auto px-8 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold border transition-colors"
-                style={{
-                  borderColor: semantic.text.primary,
-                  color: semantic.text.primary,
-                }}
-              >
-                Discover More
-              </Link>
-            </div>
-          </div>
+          <p
+            {...rise(0.32)}
+            className="hero-rise text-xs tracking-[0.1em] uppercase"
+            style={{ color: semantic.text.muted }}
+          >
+            {product
+              ? `${product.size} · ${product.serving.per_container} days · Free shipping`
+              : "Free shipping"}
+          </p>
         </div>
       </div>
     </section>

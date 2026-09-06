@@ -50,35 +50,6 @@ export const BottlePlaceholder = ({
 );
 
 
-/** Stylised cap, for when the cap cut-out is missing. */
-export const CapPlaceholder = ({ className = "" }: { className?: string }) => (
-  <div className={`flex items-center justify-center ${className}`}>
-    <svg viewBox="0 0 120 60" className="w-full h-auto" role="presentation">
-      <rect
-        x="6"
-        y="8"
-        width="108"
-        height="44"
-        rx="9"
-        fill="#FFFFFF"
-        stroke={colors.brand.creamPale}
-        strokeWidth="2"
-      />
-      {Array.from({ length: 11 }).map((_, i) => (
-        <line
-          key={i}
-          x1={16 + i * 9}
-          y1="14"
-          x2={16 + i * 9}
-          y2="46"
-          stroke={colors.brand.creamPale}
-          strokeWidth="1.5"
-        />
-      ))}
-    </svg>
-  </div>
-);
-
 /** Stylised gummy, for when a gummy cut-out is missing. */
 export const GummyPlaceholder = ({ className = "" }: { className?: string }) => (
   <div className={`flex items-center justify-center ${className}`}>
@@ -101,7 +72,7 @@ interface ProductImageProps {
   height?: number;
   priority?: boolean;
   /** Which placeholder to draw when the file is missing. */
-  variant?: "bottle" | "cap" | "gummy";
+  variant?: "bottle" | "gummy";
 }
 
 export const ProductImage = ({
@@ -116,7 +87,6 @@ export const ProductImage = ({
   const [failed, setFailed] = useState(false);
 
   if (!src || failed) {
-    if (variant === "cap") return <CapPlaceholder className={className} />;
     if (variant === "gummy") return <GummyPlaceholder className={className} />;
     return <BottlePlaceholder className={className} label={alt} />;
   }

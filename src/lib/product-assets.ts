@@ -1,23 +1,29 @@
 // Where the real Glow product photography lives.
 //
-// The hero composites the bottle from separate layers so the cap can lift away
-// from the body and gummies can travel independently. Each layer needs a
-// transparent-background PNG at these paths. Any that are missing fall back to
-// the drawn placeholder, so the site never shows a broken image.
+// Two kinds of image live here. The cut-outs -- the bottle and the loose
+// gummies -- are transparent PNGs that sit on the page's own background. The
+// photographs carry their own. Any file that is missing falls back to a drawn
+// placeholder, so the site never shows a broken image.
+//
+// The separate cap and open-body layers are gone with the hero sequence that
+// lifted the cap off the bottle; nothing composites the product any more.
 
 export const PRODUCT_ASSETS = {
   /** Whole bottle, straight on, cap attached. The default product shot. */
   bottle: "/products/glow-bottle.png",
-  /** Bottle body with the cap removed, for the opening sequence. */
-  bottleBody: "/products/glow-bottle-body.png",
-  /** The cap alone, so it can twist and lift. */
-  cap: "/products/glow-cap.png",
   /** Single gummies, cut out, for the emerge sequence. */
   gummies: [
     "/products/glow-gummy-1.png",
     "/products/glow-gummy-2.png",
     "/products/glow-gummy-3.png",
   ],
+  /**
+   * Hero photograph, cropped for the tall half-screen panel and, separately,
+   * for the shallower band that sits above the copy on a phone. Larger than
+   * the gallery crops because this is the first and biggest image on the site.
+   */
+  hero: "/products/glow-hero.jpg",
+  heroMobile: "/products/glow-hero-mobile.jpg",
   /**
    * Finished product photography, for the gallery. Unlike the layers above
    * these keep their own backgrounds -- they are shot, not composited -- and
