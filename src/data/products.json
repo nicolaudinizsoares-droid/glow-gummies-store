@@ -7,7 +7,7 @@
     "tagline": "Beauty starts from within",
     "flavor": "Passion Fruit",
     "short_description": "Daily beauty gummies that nourish your hair, skin and nails \u2014 in a passion fruit gummy you will actually look forward to.",
-    "long_description": "Glow Hair, Skin & Nails is a daily beauty supplement in a passion fruit gummy. Beauty routines usually work from the outside in; this one works the other way round, supporting hair, skin and nails as part of your everyday routine. Vegetarian friendly, non-GMO, gluten free and made in the USA.",
+    "long_description": "Glow Hair, Skin & Nails is a daily beauty supplement in a passion fruit gummy. Beauty routines usually work from the outside in; this one works the other way round, supporting hair, skin and nails as part of your everyday routine. Non-GMO, gluten free and made in the USA. Contains fish collagen, so it is not suitable for vegetarians or vegans.",
     "category": {
       "primary": "Beauty Gummies",
       "secondary": [
@@ -16,7 +16,6 @@
       ],
       "tags": [
         "beauty-from-within",
-        "vegetarian",
         "non-gmo",
         "gluten-free"
       ]
@@ -155,7 +154,7 @@
     },
     "seo": {
       "meta_title": "Hair, Skin & Nails Gummies - Passion Fruit | Glow",
-      "meta_description": "Glow daily beauty gummies for hair, skin and nails. Passion fruit flavor, 60 gummies. Vegetarian friendly, non-GMO, gluten free, made in the USA.",
+      "meta_description": "Glow daily beauty gummies for hair, skin and nails. Passion fruit flavor, 60 gummies, two a day. Non-GMO, gluten free, made in the USA. Contains fish.",
       "keywords": [
         "hair skin and nails gummies",
         "beauty gummies",
@@ -171,7 +170,7 @@
         "/products/glow-hsn-lifestyle.png"
       ]
     },
-    "usage_instructions": "Take one gummy daily. Chew thoroughly before swallowing. Do not exceed the recommended dose.",
+    "usage_instructions": "Take two gummies daily. Chew thoroughly before swallowing. Do not exceed the recommended dose.",
     "shipping": {
       "weight_grams": 380,
       "dimensions_cm": {

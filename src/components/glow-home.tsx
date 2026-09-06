@@ -9,6 +9,7 @@
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/website-layouts";
 import { Hero } from "@/components/hero";
+import { BadgeStrip } from "@/components/sections/badge-strip";
 import { TheGlow } from "@/components/sections/the-glow";
 import { TheProduct } from "@/components/sections/the-product";
 import { PassionFruit } from "@/components/sections/passion-fruit";
@@ -28,6 +29,7 @@ export default function GlowHome() {
       <Navigation />
       <main>
         <Hero />
+        <BadgeStrip />
         <TheGlow />
         <TheProduct />
         <PassionFruit />

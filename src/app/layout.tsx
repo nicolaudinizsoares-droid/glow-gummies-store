@@ -31,7 +31,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Glow - Be Ready to Glow",
   description:
-    "Daily beauty gummies for hair, skin and nails. Passion fruit flavor, vegetarian friendly, non-GMO and gluten free.",
+    "Daily beauty gummies for hair, skin and nails. Passion fruit flavor, two gummies a day. Non-GMO, gluten free and made in the USA.",
 };
 
 export default function RootLayout({
