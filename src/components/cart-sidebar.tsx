@@ -210,10 +210,18 @@ export const CartSidebar = () => {
                   </dl>
 
                   <Link
-                    href="/cart"
+                    href="/checkout"
                     onClick={closeCart}
                     className="block w-full py-4 text-center text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90"
                     style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
+                  >
+                    Checkout
+                  </Link>
+                  <Link
+                    href="/cart"
+                    onClick={closeCart}
+                    className="block w-full mt-2 py-3 text-center text-[0.75rem] tracking-[0.18em] uppercase font-semibold border"
+                    style={{ borderColor: semantic.text.primary, color: semantic.text.primary }}
                   >
                     View bag
                   </Link>

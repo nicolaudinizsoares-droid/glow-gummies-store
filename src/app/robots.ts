@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
       // The bag is per-visitor state; there is nothing to index.
-      disallow: ["/cart"],
+      disallow: ["/cart", "/checkout"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

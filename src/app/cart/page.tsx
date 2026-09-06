@@ -186,12 +186,13 @@ export default function CartPage() {
                   </div>
                 </dl>
 
-                <button
-                  className="w-full mt-7 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90"
+                <Link
+                  href="/checkout"
+                  className="block w-full mt-7 py-4 text-center text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90"
                   style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
                 >
                   Checkout
-                </button>
+                </Link>
                 <p className="text-xs text-center mt-3" style={{ color: semantic.text.muted }}>
                   Free shipping on every order. Taxes calculated at checkout.
                 </p>
