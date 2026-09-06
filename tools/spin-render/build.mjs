@@ -1,3 +1,13 @@
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+// Read from the product data rather than restating it; a hardcoded net weight
+// here is how the artwork drifts away from the site.
+const DATA = fileURLToPath(new URL('../../src/data/products.json', import.meta.url));
+const PRODUCT = JSON.parse(fs.readFileSync(DATA, 'utf8'))[0];
+const NET_WEIGHT = PRODUCT.net_weight;
+const GUMMY_COUNT = PRODUCT.serving.gummy_count;
+
 export const CREAM = '#F7EBD1';
 export const GOLD  = '#C6A063';
 export const INK   = '#141210';
@@ -54,7 +64,7 @@ const label = (x, y, w, h) => {
     <line x1="${x + 48}" y1="${y + 532}" x2="${x + w - 48}" y2="${y + 532}"
           stroke="${GOLD}" stroke-width="1.5"/>
     <text x="${cx}" y="${y + 578}" text-anchor="middle" font-family="Archivo"
-          font-weight="600" font-size="28" letter-spacing="-0.3" fill="${INK}">NET WT. 10.1oz (286g) | 60 GUMMIES</text>
+          font-weight="600" font-size="28" letter-spacing="-0.3" fill="${INK}">NET WT. ${NET_WEIGHT} | ${GUMMY_COUNT} GUMMIES</text>
   </g>`;
 };
 

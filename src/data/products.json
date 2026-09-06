@@ -22,7 +22,7 @@
     },
     "format": "Chewable gummy",
     "size": "60 gummies",
-    "net_weight": "10.1 oz (286 g)",
+    "net_weight": "6.56 oz (186 g)",
     "serving": {
       "size": "2 gummies",
       "per_container": 30,
@@ -164,16 +164,17 @@
       ]
     },
     "images": {
-      "primary": "/products/glow-bottle.png",
+      "primary": "/products/glow-photo-fruit.jpg",
       "gallery": [
-        "/products/glow-bottle.png",
-        "/products/glow-bottle-body.png",
-        "/products/glow-lifestyle.png"
+        "/products/glow-photo-fruit.jpg",
+        "/products/glow-photo-open.jpg",
+        "/products/glow-photo-hand.jpg",
+        "/products/glow-photo-skin.jpg"
       ]
     },
     "usage_instructions": "Take two gummies daily. Chew thoroughly before swallowing. Do not exceed the recommended dose.",
     "shipping": {
-      "weight_grams": 380,
+      "weight_grams": 280,
       "dimensions_cm": {
         "length": 10,
         "width": 6,

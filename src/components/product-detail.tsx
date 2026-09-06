@@ -23,10 +23,14 @@ import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/hooks/useCart";
 import { semantic } from "@/styles/tokens";
 
+// Photographs, not the composited hero layers: each one already carries its
+// own background, so the frame below shows them edge to edge rather than
+// floating a cut-out on a gradient.
 const GALLERY = [
-  { src: PRODUCT_ASSETS.bottle, label: "Bottle" },
-  { src: PRODUCT_ASSETS.bottleBody, label: "Open" },
-  { src: PRODUCT_ASSETS.lifestyle, label: "Passion fruit" },
+  { src: PRODUCT_ASSETS.photos.fruit, label: "Passion fruit" },
+  { src: PRODUCT_ASSETS.photos.open, label: "Open" },
+  { src: PRODUCT_ASSETS.photos.hand, label: "In hand" },
+  { src: PRODUCT_ASSETS.photos.skin, label: "Skin" },
 ];
 
 export const ProductDetail = ({ slug }: { slug: string }) => {
@@ -75,16 +79,16 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
             {/* Gallery */}
             <div>
               <div
-                className="flex items-center justify-center p-8 md:p-12"
-                style={{ background: "linear-gradient(150deg, #FFF6E6 0%, #FBE4CE 100%)" }}
+                className="relative aspect-[4/5] overflow-hidden"
+                style={{ backgroundColor: semantic.surface.raised }}
               >
                 <ProductImage
                   src={GALLERY[active].src}
                   alt={`${product.name} — ${GALLERY[active].label}`}
-                  width={760}
-                  height={1470}
+                  width={1200}
+                  height={1500}
                   priority
-                  className="w-full max-w-[260px] h-auto object-contain drop-shadow-[0_24px_40px_rgba(10,29,54,0.16)]"
+                  className="h-full w-full object-cover"
                 />
               </div>
               <div className="flex gap-3 mt-3">
@@ -94,18 +98,19 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                     onClick={() => setActive(i)}
                     aria-label={`View ${shot.label}`}
                     aria-current={i === active}
-                    className="flex-1 p-3 transition-colors"
+                    className="flex-1 aspect-[4/5] overflow-hidden transition-colors"
                     style={{
                       backgroundColor: semantic.surface.raised,
-                      border: `1px solid ${i === active ? semantic.border.strong : semantic.border.subtle}`,
+                      outline: `1px solid ${i === active ? semantic.border.strong : semantic.border.subtle}`,
+                      outlineOffset: "-1px",
                     }}
                   >
                     <ProductImage
                       src={shot.src}
                       alt=""
-                      width={200}
-                      height={200}
-                      className="h-14 w-auto mx-auto object-contain"
+                      width={300}
+                      height={375}
+                      className="h-full w-full object-cover"
                     />
                   </button>
                 ))}

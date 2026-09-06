@@ -41,7 +41,7 @@ export interface Product {
   size: string
   /** Flavour of the gummy, e.g. "Passion Fruit". */
   flavor: string
-  /** Net weight as printed on the label, e.g. "10.1 oz (286 g)". */
+  /** Net weight as printed on the label, e.g. "6.56 oz (186 g)". */
   net_weight: string
   serving: {
     /** Serving size as printed on the panel, e.g. "2 gummies". */
