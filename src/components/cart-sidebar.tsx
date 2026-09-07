@@ -67,7 +67,7 @@ export const CartSidebar = () => {
               <button
                 onClick={closeCart}
                 aria-label="Close cart"
-                className="p-2 -mr-2 rounded-full transition-colors hover:bg-black/5"
+                className="inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 rounded-full transition-colors hover:bg-black/5"
               >
                 <X className="w-4 h-4" style={{ color: semantic.text.primary }} />
               </button>
@@ -134,7 +134,7 @@ export const CartSidebar = () => {
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                 aria-label={`Decrease quantity of ${item.name}`}
-                                className="px-2 py-1.5"
+                                className="inline-flex items-center justify-center min-h-11 min-w-11"
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
@@ -144,7 +144,7 @@ export const CartSidebar = () => {
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                 aria-label={`Increase quantity of ${item.name}`}
-                                className="px-2 py-1.5"
+                                className="inline-flex items-center justify-center min-h-11 min-w-11"
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -160,7 +160,7 @@ export const CartSidebar = () => {
                               <button
                                 onClick={() => removeFromCart(item.id)}
                                 aria-label={`Remove ${item.name}`}
-                                className="p-1 transition-opacity hover:opacity-60"
+                                className="inline-flex items-center justify-center min-h-11 min-w-11 -mr-2 transition-opacity hover:opacity-60"
                               >
                                 <Trash2 className="w-3.5 h-3.5" style={{ color: semantic.text.muted }} />
                               </button>
