@@ -13,47 +13,16 @@
 //
 // The photograph is the real product, which is also why the composited
 // cap-and-body layers are gone: they only existed so the cap could lift away.
-//
-// A modelled bottle now turns on top of that photograph -- see bottle-3d.tsx.
-// It is strictly an upgrade layer: it loads after paint, only when three.js
-// arrives and only when the visitor has not asked for reduced motion, and it
-// cross-fades in over the still. Everything below still renders, and still
-// reads correctly, if it never shows up at all.
-
-"use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import type { CSSProperties } from "react";
-
-import { Bottle3D } from "@/components/bottle-3d";
 
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
-import { primitive, semantic } from "@/styles/tokens";
+import { semantic } from "@/styles/tokens";
 
 const SLUG = "hair-skin-nails-gummies-passion-fruit";
-
-/**
- * The marquee's contents. Figures come from the product data for the same
- * reason every other figure onsite does: the page cannot quote a number the
- * packaging does not. Marked aria-hidden -- each of these is stated properly
- * elsewhere on the page, and a scrolling list is a poor way to read them.
- */
-const marqueeFacts = (
-  gummyCount: number,
-  servings: number,
-): string[] => [
-  "Beauty starts from within",
-  "6,000 mcg biotin",
-  "Passion fruit",
-  `${gummyCount} gummies`,
-  "Fish collagen",
-  `${servings} days`,
-  "Non-GMO",
-  "Two a day",
-];
 
 const CTA_BASE =
   "w-full sm:w-auto px-8 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold text-center whitespace-nowrap";
@@ -66,15 +35,10 @@ const rise = (delay: number) =>
   ({ style: { "--hero-delay": `${delay}s` } as CSSProperties });
 
 export const Hero = () => {
-  const [spinning, setSpinning] = useState(false);
   // Price, count and duration come from the product data, never from a string
   // typed here -- the whole point of the data file is that the site cannot
   // quote a figure the packaging does not.
   const product = getProductBySlug(SLUG);
-  const facts = marqueeFacts(
-    product?.serving.gummy_count ?? 60,
-    product?.serving.per_container ?? 30,
-  );
 
   return (
     <section
@@ -91,16 +55,7 @@ export const Hero = () => {
           a CSS-hidden <img> still downloads, so the next/image version fetched
           both the tall and the wide crop on every device. With media on the
           <source>, each device fetches one. */}
-      <div
-        className="relative order-1 lg:order-2 aspect-[6/5] lg:aspect-auto lg:min-h-[calc(100vh-5rem)] overflow-hidden"
-        style={{ backgroundColor: primitive.cream[300] }}
-      >
-        {/* The stills. Once the model is turning they fade out, leaving the
-            bottle on the label-stock ground rather than on a second photo. */}
-        <div
-          className="hero-frame absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: spinning ? 0 : 1 }}
-        >
+      <div className="hero-frame relative order-1 lg:order-2 aspect-[6/5] lg:aspect-auto lg:min-h-[calc(100vh-5rem)] overflow-hidden">
         <picture>
           <source media="(min-width: 1024px)" srcSet={PRODUCT_ASSETS.hero} />
           <img
@@ -120,18 +75,6 @@ export const Hero = () => {
             className="hero-beat-b absolute inset-0 h-full w-full object-cover"
           />
         </picture>
-        </div>
-
-        <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: spinning ? 1 : 0 }}
-        >
-          <Bottle3D
-            netWeight={product?.net_weight ?? "6.56 oz (186 g)"}
-            gummyCount={product?.serving.gummy_count ?? 60}
-            onReady={() => setSpinning(true)}
-          />
-        </div>
       </div>
 
       {/* Copy */}
@@ -197,37 +140,6 @@ export const Hero = () => {
               ? `${product.size} · ${product.serving.per_container} days · Free shipping`
               : "Free shipping"}
           </p>
-        </div>
-      </div>
-
-      {/* Fact marquee. On a wide screen it lies across the foot of both
-          columns -- the seam between copy and photograph -- so it reads as a
-          rule that happens to be moving rather than a fourth block. On a phone
-          the two columns are already stacked, so it takes its own row instead
-          of floating over the end of the copy. */}
-      <div
-        className="marquee order-3 overflow-hidden py-3.5 lg:absolute lg:inset-x-0 lg:bottom-0"
-        style={{
-          backgroundColor: "rgba(253, 251, 247, 0.82)",
-          borderTop: `1px solid ${semantic.border.subtle}`,
-        }}
-        aria-hidden="true"
-      >
-        <div className="marquee-track">
-          {[0, 1].map((copy) => (
-            <div key={copy} className="flex shrink-0 items-center">
-              {facts.map((fact) => (
-                <span
-                  key={fact}
-                  className="flex items-center gap-6 whitespace-nowrap pr-6 text-[0.6875rem] font-semibold uppercase tracking-[0.22em]"
-                  style={{ color: semantic.text.secondary }}
-                >
-                  {fact}
-                  <span style={{ color: semantic.accent.metallic }}>+</span>
-                </span>
-              ))}
-            </div>
-          ))}
         </div>
       </div>
     </section>
