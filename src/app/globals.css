@@ -373,3 +373,41 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Hero fact marquee.
+ *
+ * The track holds the same list twice and travels exactly -50%, so the seam
+ * between the two copies never enters the viewport and the loop has no visible
+ * restart. Pausing on hover is not decoration: a line the visitor wants to read
+ * would otherwise slide away from them.
+ *
+ * The blanket reduced-motion rule below collapses duration, which on an
+ * infinite translation leaves the track wherever it happened to be. Drop the
+ * animation outright instead, so it rests at its start.
+ */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee-track:hover,
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
