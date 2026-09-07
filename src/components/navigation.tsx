@@ -92,7 +92,7 @@ export const Navigation = () => {
           <button
             onClick={toggleCart}
             aria-label={`Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
-            className="relative p-2.5 rounded-full transition-colors hover:bg-black/5"
+            className="relative inline-flex items-center justify-center min-h-11 min-w-11 rounded-full transition-colors hover:bg-black/5"
           >
             <ShoppingBag
               className="w-[18px] h-[18px]"
@@ -100,7 +100,7 @@ export const Navigation = () => {
             />
             {itemCount > 0 && (
               <span
-                className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 text-[10px] font-semibold rounded-full flex items-center justify-center"
+                className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 text-[10px] font-semibold rounded-full flex items-center justify-center"
                 style={{
                   backgroundColor: semantic.accent.primary,
                   color: semantic.text.onAccent,
@@ -116,7 +116,7 @@ export const Navigation = () => {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
-            className="md:hidden p-2.5 rounded-full transition-colors hover:bg-black/5"
+            className="md:hidden inline-flex items-center justify-center min-h-11 min-w-11 rounded-full transition-colors hover:bg-black/5"
           >
             {mobileOpen ? (
               <X className="w-[18px] h-[18px]" style={{ color: semantic.text.primary }} />

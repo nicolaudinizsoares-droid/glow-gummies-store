@@ -171,7 +171,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     disabled={quantity <= 1}
                     aria-label="Decrease quantity"
-                    className="px-3 py-2.5 disabled:opacity-30"
+                    className="inline-flex items-center justify-center min-h-11 min-w-11 disabled:opacity-30"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
@@ -182,7 +182,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                     onClick={() => setQuantity((q) => Math.min(10, q + 1))}
                     disabled={quantity >= 10}
                     aria-label="Increase quantity"
-                    className="px-3 py-2.5 disabled:opacity-30"
+                    className="inline-flex items-center justify-center min-h-11 min-w-11 disabled:opacity-30"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
