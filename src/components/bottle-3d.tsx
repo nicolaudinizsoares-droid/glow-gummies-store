@@ -22,6 +22,9 @@ import { useEffect, useRef, useState } from "react";
 
 import { usePrefersReducedMotion } from "@/lib/motion/use-gsap";
 
+/** The printed wordmark, wrapped onto the label. */
+const BRAND_LOGO = "/brand/glow-logo.png";
+
 interface Bottle3DProps {
   /** Net weight and gummy count, as printed on the label. */
   netWeight: string;
@@ -46,8 +49,11 @@ function resolveFont(variable: string, fallback: string): string {
   return family;
 }
 
-function drawLabel(netWeight: string, gummyCount: number): HTMLCanvasElement {
-  const script = resolveFont("--font-pacifico", "cursive");
+function drawLabel(
+  netWeight: string,
+  gummyCount: number,
+  logo?: HTMLImageElement,
+): HTMLCanvasElement {
   const sans = resolveFont("--font-inter", "sans-serif");
 
   const c = document.createElement("canvas");
@@ -73,10 +79,25 @@ function drawLabel(netWeight: string, gummyCount: number): HTMLCanvasElement {
 
   x.textAlign = "center";
   x.fillStyle = "#14213A";
-  x.font = `62px ${script}`;
-  x.fillText("Glow", cx - 6, 160);
-  x.font = `600 17px ${sans}`;
-  x.fillText("+", cx + 72, 126);
+
+  if (logo) {
+    // The real wordmark, from public/brand/glow-logo.png. Cropped to the
+    // script and its star: the "BE READY TO GLOW" line sits underneath in the
+    // source file but is not on the printed bottle label.
+    const SRC_H = 0.73; // fraction of the artwork above the tagline
+    const w = 236;
+    const h = (w / logo.naturalWidth) * (logo.naturalHeight * SRC_H);
+    x.drawImage(
+      logo,
+      0, 0, logo.naturalWidth, logo.naturalHeight * SRC_H,
+      cx - w / 2, 92, w, h,
+    );
+  } else {
+    // Until it loads, set the name rather than leave a hole.
+    x.font = `italic 58px ${sans}`;
+    x.fillText("Glow", cx, 158);
+  }
+
   x.font = `700 41px ${sans}`;
   x.fillText("HAIR, SKIN", cx, 232);
   x.fillText("& NAILS", cx, 276);
@@ -191,6 +212,16 @@ export const Bottle3D = ({
 
         const tex = new THREE.CanvasTexture(drawLabel(netWeight, gummyCount));
         tex.colorSpace = THREE.SRGBColorSpace;
+
+        // Swap in the real wordmark once it arrives. Same origin, so the canvas
+        // is never tainted; if the file is missing the drawn fallback stands.
+        const logo = new Image();
+        logo.onload = () => {
+          if (disposed) return;
+          tex.image = drawLabel(netWeight, gummyCount, logo);
+          tex.needsUpdate = true;
+        };
+        logo.src = BRAND_LOGO;
         tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
         const label = new THREE.Mesh(
           new THREE.CylinderGeometry(2.17, 2.17, 4.35, 72, 1, true),
