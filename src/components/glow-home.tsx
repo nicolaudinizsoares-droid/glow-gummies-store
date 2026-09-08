@@ -16,6 +16,7 @@ import { PassionFruit } from "@/components/sections/passion-fruit";
 import { Benefits } from "@/components/sections/benefits";
 import { Ingredients } from "@/components/sections/ingredients";
 import { TheRitual } from "@/components/sections/the-ritual";
+import { SocialProof } from "@/components/sections/social-proof";
 import { ProductCta } from "@/components/sections/product-cta";
 import { Faq } from "@/components/sections/faq";
 import { FinalCta } from "@/components/sections/final-cta";
@@ -35,6 +36,7 @@ export default function GlowHome() {
         <Benefits />
         <Ingredients />
         <TheRitual />
+        <SocialProof />
         <ProductCta />
         <Faq />
         <FinalCta />
