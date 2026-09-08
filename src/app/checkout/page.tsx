@@ -20,6 +20,7 @@ import {
   type CheckoutDetails,
   type CheckoutErrors,
 } from "@/lib/checkout";
+import { REVIEW_OFFER } from "@/lib/review-invite";
 import { semantic } from "@/styles/tokens";
 
 const FIELDS: (keyof CheckoutDetails)[][] = [
@@ -183,6 +184,18 @@ export default function CheckoutPage() {
                     This is where the order would be handed to a payment
                     processor. Nothing has been charged and no order has been
                     placed.
+                    <p className="mt-3">
+                      Once you have tried them,{" "}
+                      <Link
+                        href="/review"
+                        className="underline underline-offset-2"
+                        style={{ color: semantic.text.primary }}
+                      >
+                        leave a review for {REVIEW_OFFER.percentOff}% off your
+                        next order
+                      </Link>
+                      . Any rating qualifies.
+                    </p>
                   </div>
                 )}
 
