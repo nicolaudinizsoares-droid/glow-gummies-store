@@ -50,7 +50,7 @@ export const REVIEW_OFFER = {
   /** Shown on the invitation, next to the offer. */
   terms: [
     "Any honest review qualifies, whatever rating you give. The code is not conditional on a positive review.",
-    "Reviews left through this offer are published with a note saying they were incentivised.",
+    "Reviews left through this offer are published with a note saying they were incentivized.",
     "One code per order. Valid for 90 days on your next order, and not combinable with other offers.",
     "Reviews are published as written, apart from removing abuse or personal details.",
   ],
