@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Lock, AlertCircle } from "lucide-react";
 
@@ -20,6 +20,7 @@ import {
   type CheckoutDetails,
   type CheckoutErrors,
 } from "@/lib/checkout";
+import { PaymentSection, type ConfirmPayment } from "@/components/checkout/payment-section";
 import { REVIEW_OFFER } from "@/lib/review-invite";
 import { semantic } from "@/styles/tokens";
 
@@ -38,13 +39,51 @@ export default function CheckoutPage() {
   const [details, setDetails] = useState<CheckoutDetails>(EMPTY_DETAILS);
   const [errors, setErrors] = useState<CheckoutErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [intentId, setIntentId] = useState<string | null>(null);
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
+  const confirmRef = useRef<ConfirmPayment | null>(null);
+  const onConfirmReady = useCallback((fn: ConfirmPayment | null) => {
+    confirmRef.current = fn;
+  }, []);
+
+  // Open a PaymentIntent as soon as there is a cart, so the card box is present
+  // while the customer fills the address in rather than appearing underneath
+  // them at the end. The amount is worked out on the server from the product
+  // data; nothing here tells it a price.
+  useEffect(() => {
+    if (items.length === 0 || intentId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/checkout/payment-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lines: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          }),
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as { clientSecret: string; paymentIntentId: string };
+        if (cancelled) return;
+        setClientSecret(data.clientSecret);
+        setIntentId(data.paymentIntentId);
+      } catch {
+        /* the card box stays in its loading state; Place Order reports it */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [items, intentId]);
 
   const set = (field: keyof CheckoutDetails, value: string) => {
     setDetails((d) => ({ ...d, [field]: value }));
     if (errors[field]) setErrors((e) => ({ ...e, [field]: undefined }));
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const found = validate(details);
     setErrors(found);
@@ -53,8 +92,49 @@ export default function CheckoutPage() {
       first?.focus();
       return;
     }
+
+    const confirm = confirmRef.current;
+    if (!confirm || !intentId) {
+      setPayError("The payment form is still loading. Try again in a moment.");
+      return;
+    }
+
+    setPaying(true);
+    setPayError(null);
     track({ name: "begin_checkout", value: total, items: items.length });
-    setSubmitted(true);
+
+    try {
+      // Attach the delivery details to the PaymentIntent before confirming.
+      // The webhook builds the Shopify order from this metadata, so it has to
+      // be on the intent before the money moves, not after.
+      const res = await fetch("/api/checkout/payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          details,
+          paymentIntentId: intentId,
+        }),
+      });
+      if (!res.ok) {
+        setPayError("Could not prepare the payment. Check your details and try again.");
+        return;
+      }
+
+      const message = await confirm(`${window.location.origin}/checkout/success`);
+      if (message) {
+        setPayError(message);
+        return;
+      }
+
+      // Paid. The order itself is created by the Stripe webhook, never here.
+      setSubmitted(true);
+      window.location.assign(`/checkout/success?payment_intent=${intentId}`);
+    } catch {
+      setPayError("Something went wrong taking the payment. You have not been charged twice.");
+    } finally {
+      setPaying(false);
+    }
   };
 
   return (
@@ -139,36 +219,55 @@ export default function CheckoutPage() {
                   Payment
                 </h2>
 
-                {/* No card fields. See src/lib/checkout.ts for why. */}
-                <div
-                  className="flex gap-3 p-5"
-                  style={{
-                    backgroundColor: semantic.surface.tint,
-                    border: `1px solid ${semantic.border.default}`,
-                  }}
-                >
-                  <AlertCircle
-                    className="w-4 h-4 shrink-0 mt-0.5"
-                    style={{ color: semantic.accent.secondary }}
-                    aria-hidden="true"
-                  />
-                  <div className="text-sm leading-relaxed" style={{ color: semantic.text.secondary }}>
-                    {PROCESSOR.connected ? (
-                      <>Payment is handled securely by {PROCESSOR.name}.</>
-                    ) : (
-                      <>
-                        <strong style={{ color: semantic.text.primary }}>
-                          No payment processor is connected yet.
-                        </strong>{" "}
-                        This store cannot take payment, so no card details are
-                        collected here. Orders placed now are not charged and
-                        will not ship.
-                      </>
-                    )}
+                {PROCESSOR.connected ? (
+                  <>
+                    {/* Stripe's Payment Element. The card number goes straight
+                        to Stripe in its own iframe and never touches this
+                        site. */}
+                    <PaymentSection
+                      clientSecret={clientSecret}
+                      onConfirmReady={onConfirmReady}
+                    />
+                    <p className="text-xs mt-3" style={{ color: semantic.text.muted }}>
+                      Payment is handled securely by {PROCESSOR.name}. Your card
+                      details never reach this site.
+                    </p>
+                  </>
+                ) : (
+                  <div
+                    className="flex gap-3 p-5"
+                    style={{
+                      backgroundColor: semantic.surface.tint,
+                      border: `1px solid ${semantic.border.default}`,
+                    }}
+                  >
+                    <AlertCircle
+                      className="w-4 h-4 shrink-0 mt-0.5"
+                      style={{ color: semantic.accent.secondary }}
+                      aria-hidden="true"
+                    />
+                    <div className="text-sm leading-relaxed" style={{ color: semantic.text.secondary }}>
+                      <strong style={{ color: semantic.text.primary }}>
+                        No payment processor is connected yet.
+                      </strong>{" "}
+                      This store cannot take payment, so no card details are
+                      collected here. Orders placed now are not charged and
+                      will not ship.
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {submitted && (
+                {payError && (
+                  <p
+                    className="mt-4 text-sm"
+                    style={{ color: semantic.state.error }}
+                    role="alert"
+                  >
+                    {payError}
+                  </p>
+                )}
+
+                {submitted && !PROCESSOR.connected && (
                   <div
                     className="mt-5 p-5 text-sm leading-relaxed"
                     style={{
@@ -201,10 +300,15 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
+                  disabled={paying || (PROCESSOR.connected && !clientSecret)}
                   className="w-full mt-6 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
                   style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
                 >
-                  Continue to payment
+                  {!PROCESSOR.connected
+                    ? "Continue to payment"
+                    : paying
+                      ? "Taking payment…"
+                      : `Place order — ${formatPrice(total + (shipping.cost ?? 0))}`}
                 </button>
 
                 <p

@@ -129,6 +129,15 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find(product => product.slug === slug)
 }
 
+/**
+ * Look a product up by the id the cart carries. Used by the checkout API to
+ * price an order from the product data rather than from whatever the browser
+ * claims a thing costs.
+ */
+export function getProductById(id: string): Product | undefined {
+  return products.find(product => product.id === id)
+}
+
 export function getProductsByCategory(category: string): Product[] {
   return products.filter(product => 
     product.category.primary.toLowerCase() === category.toLowerCase()
