@@ -68,9 +68,6 @@ export default function ShopPage() {
                     >
                       {formatPrice(product.pricing.selling_price)}
                     </span>
-                    <span className="text-sm line-through" style={{ color: semantic.text.muted }}>
-                      {formatPrice(product.pricing.mrp)}
-                    </span>
                   </p>
                 </Link>
               </li>

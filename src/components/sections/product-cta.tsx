@@ -53,9 +53,6 @@ export const ProductCta = () => {
             >
               {formatPrice(product.pricing.selling_price)}
             </span>
-            <span className="text-base line-through" style={{ color: semantic.text.muted }}>
-              {formatPrice(product.pricing.mrp)}
-            </span>
           </div>
           <button
             data-reveal-item
