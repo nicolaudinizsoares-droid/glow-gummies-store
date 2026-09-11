@@ -55,7 +55,7 @@ export default function CheckoutPage() {
   // showing the "no processor connected" notice while the answer is still in
   // flight would tell every customer the shop is broken for a moment.
   const [publishableKey, setPublishableKey] = useState<string | null>(null);
-  const [configState, setConfigState] = useState<"checking" | "ready" | "unavailable">("checking");
+  const [configState, setConfigState] = useState<"checking" | "ready" | "nokey" | "error">("checking");
   const confirmRef = useRef<ConfirmPayment | null>(null);
   // Also held in a ref so the pricing effect can reuse the open intent without
   // listing it as a dependency -- it is the effect that sets it, and depending
@@ -75,11 +75,11 @@ export default function CheckoutPage() {
           setPublishableKey(data.publishableKey);
           setConfigState("ready");
         } else {
-          setConfigState("unavailable");
+          setConfigState("nokey");
         }
       })
       .catch(() => {
-        if (!cancelled) setConfigState("unavailable");
+        if (!cancelled) setConfigState("error");
       });
     return () => {
       cancelled = true;
@@ -383,11 +383,16 @@ export default function CheckoutPage() {
                     />
                     <div className="text-sm leading-relaxed" style={{ color: semantic.text.secondary }}>
                       <strong style={{ color: semantic.text.primary }}>
-                        No payment processor is connected yet.
+                        Card payments are temporarily unavailable.
                       </strong>{" "}
-                      This store cannot take payment, so no card details are
-                      collected here. Orders placed now are not charged and
-                      will not ship.
+                      Nothing has been charged and no order has been placed.
+                      Please try again shortly.
+                      {/* Distinguishes "the server has no key" from "the
+                          browser could not reach the server", which otherwise
+                          present identically and have different fixes. */}
+                      <span className="block mt-2 text-xs" style={{ color: semantic.text.muted }}>
+                        Reference: {configState === "error" ? "CFG-UNREACHABLE" : "CFG-NO-KEY"}
+                      </span>
                     </div>
                   </div>
                 )}
