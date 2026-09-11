@@ -15,8 +15,12 @@ export const PROCESSOR: {
   connected: boolean;
   name: string | null;
 } = {
-  connected: false,
-  name: null,
+  // Derived from the publishable key rather than hardcoded, so a deployment
+  // without Stripe configured shows the honest "cannot take payment" notice
+  // instead of a card box that could never work. The publishable key is safe in
+  // the browser by design -- it can start a payment, never read or refund one.
+  connected: Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY),
+  name: "Stripe",
 };
 
 export interface CheckoutDetails {
