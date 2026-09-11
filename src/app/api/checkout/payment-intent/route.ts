@@ -33,8 +33,11 @@ interface Body {
 
 export async function POST(request: Request) {
   if (!stripeConfigured()) {
+    // Referenced rather than described: the customer cannot act on it, and a
+    // quoted reference identifies the missing variable without a support
+    // conversation that guesses between three of them.
     return NextResponse.json(
-      { error: "Payments are not configured." },
+      { error: "Payments are unavailable right now. (PAY-NO-SECRET)" },
       { status: 503 },
     );
   }
@@ -71,7 +74,7 @@ export async function POST(request: Request) {
     if (error instanceof PriceConfigError) {
       console.error("[payment-intent] price configuration:", error.message);
       return NextResponse.json(
-        { error: "Payments are unavailable right now." },
+        { error: "Payments are unavailable right now. (PAY-PRICE-CFG)" },
         { status: 503 },
       );
     }
@@ -155,6 +158,9 @@ export async function POST(request: Request) {
     // Never hand a Stripe error string to the browser: it can name internal
     // objects and configuration.
     console.error("[payment-intent]", error);
-    return NextResponse.json({ error: "Could not start the payment." }, { status: 502 });
+    return NextResponse.json(
+      { error: "Could not start the payment. (PAY-STRIPE-ERR)" },
+      { status: 502 },
+    );
   }
 }
