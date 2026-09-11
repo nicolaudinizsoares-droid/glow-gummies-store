@@ -6,7 +6,7 @@
     "slug": "hair-skin-nails-gummies-passion-fruit",
     "tagline": "Beauty starts from within",
     "flavor": "Passion Fruit",
-    "short_description": "Daily beauty gummies that nourish your hair, skin and nails \u2014 in a passion fruit gummy you will actually look forward to.",
+    "short_description": "Daily beauty gummies that nourish your hair, skin and nails — in a passion fruit gummy you will actually look forward to.",
     "long_description": "Glow Hair, Skin & Nails is a daily beauty supplement in a passion fruit gummy. Beauty routines usually work from the outside in; this one works the other way round, supporting hair, skin and nails as part of your everyday routine. Non-GMO, gluten free and made in the USA. Contains fish collagen, so it is not suitable for vegetarians or vegans.",
     "category": {
       "primary": "Beauty Gummies",
@@ -143,9 +143,9 @@
       "Healthy nails"
     ],
     "pricing": {
-      "mrp": 37.0,
-      "selling_price": 30.0,
-      "discount_percentage": 19
+      "mrp": 35.0,
+      "selling_price": 35.0,
+      "discount_percentage": 0
     },
     "inventory": {
       "stock_quantity": 500,

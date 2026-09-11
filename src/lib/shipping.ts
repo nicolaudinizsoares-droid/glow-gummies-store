@@ -2,7 +2,7 @@
 //
 // This exists because the shipping numbers were left over from when the store
 // priced in rupees: free over 999, otherwise a flat 50. Those were sensible as
-// rupees. Read as dollars they charge $50 to ship a $30 bottle, and the free
+// rupees. Read as dollars they charge $50 to ship a $35 bottle, and the free
 // threshold is 33 times the price of the only product.
 //
 // Glow ships free on every order, so mode is "free" and the cart shows Free

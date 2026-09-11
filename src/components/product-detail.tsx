@@ -41,7 +41,6 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
   if (!product) return null;
 
   const price = product.pricing.selling_price;
-  const saving = product.pricing.mrp - price;
 
   const add = () =>
     addToCart({
@@ -135,15 +134,6 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                   style={{ color: semantic.text.primary }}
                 >
                   {formatPrice(price)}
-                </span>
-                <span className="text-base line-through" style={{ color: semantic.text.muted }}>
-                  {formatPrice(product.pricing.mrp)}
-                </span>
-                <span
-                  className="text-xs font-semibold uppercase tracking-[0.12em] px-2 py-1"
-                  style={{ backgroundColor: semantic.accent.primary, color: semantic.text.onAccent }}
-                >
-                  Save {formatPrice(saving)}
                 </span>
               </div>
               <p className="text-sm mb-2" style={{ color: semantic.text.muted }}>

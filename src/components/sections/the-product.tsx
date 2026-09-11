@@ -65,18 +65,6 @@ export const TheProduct = () => (
           >
             {formatPrice(product.pricing.selling_price)}
           </span>
-          <span className="text-base line-through" style={{ color: semantic.text.muted }}>
-            {formatPrice(product.pricing.mrp)}
-          </span>
-          <span
-            className="text-xs font-semibold uppercase tracking-[0.12em] px-2 py-1"
-            style={{
-              backgroundColor: semantic.accent.primary,
-              color: semantic.text.onAccent,
-            }}
-          >
-            Save {formatPrice(product.pricing.mrp - product.pricing.selling_price)}
-          </span>
         </div>
 
         <Link
