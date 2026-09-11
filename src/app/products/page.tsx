@@ -7,6 +7,7 @@ import { ProductImage } from "@/components/product-image";
 import { AllergenNotice } from "@/components/allergen-notice";
 import { products } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
+import { FreeShippingBadge } from "@/components/free-shipping-badge";
 import { semantic } from "@/styles/tokens";
 
 export const metadata: Metadata = {
@@ -68,6 +69,7 @@ export default function ShopPage() {
                     >
                       {formatPrice(product.pricing.selling_price)}
                     </span>
+                    <FreeShippingBadge />
                   </p>
                 </Link>
               </li>

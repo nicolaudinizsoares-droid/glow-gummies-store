@@ -8,6 +8,7 @@ import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { products } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/hooks/useCart";
+import { FreeShippingBadge } from "@/components/free-shipping-badge";
 import { semantic } from "@/styles/tokens";
 
 const product = products[0];
@@ -53,6 +54,7 @@ export const ProductCta = () => {
             >
               {formatPrice(product.pricing.selling_price)}
             </span>
+            <FreeShippingBadge />
           </div>
           <button
             data-reveal-item
