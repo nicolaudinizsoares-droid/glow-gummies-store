@@ -2,8 +2,12 @@
 //
 // The client sends product ids, quantities and the delivery details it already
 // collected. It does not send prices, and any it did send would be ignored --
-// priceOrder works the total out from products.json. That is the whole defence
-// against someone editing the request and buying at their own price.
+// priceOrder works the total out from the live Stripe price. That is the whole
+// defence against someone editing the request and buying at their own price.
+//
+// The secret key is reachable only from here and the modules under
+// lib/server/, all of which are marked "server-only": importing any of them
+// from a client component fails the build rather than shipping a key.
 //
 // Called again on every edit of the cart, so it reuses one PaymentIntent per
 // checkout session rather than leaving a trail of abandoned ones in Stripe.
@@ -11,7 +15,12 @@
 import { NextResponse } from "next/server";
 
 import { getStripe, stripeConfigured } from "@/lib/server/stripe";
-import { priceOrder, PricingError, type RequestedLine } from "@/lib/server/pricing";
+import {
+  priceOrder,
+  PriceConfigError,
+  PricingError,
+  type RequestedLine,
+} from "@/lib/server/pricing";
 import { validate, type CheckoutDetails } from "@/lib/checkout";
 
 export const runtime = "nodejs";
@@ -51,10 +60,20 @@ export async function POST(request: Request) {
 
   let priced;
   try {
-    priced = priceOrder(body.lines ?? []);
+    priced = await priceOrder(body.lines ?? []);
   } catch (error) {
     if (error instanceof PricingError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    // A misconfigured price is ours, not the customer's. Log the detail, tell
+    // them only that payment is unavailable -- the message names env vars and
+    // Stripe object ids.
+    if (error instanceof PriceConfigError) {
+      console.error("[payment-intent] price configuration:", error.message);
+      return NextResponse.json(
+        { error: "Payments are unavailable right now." },
+        { status: 503 },
+      );
     }
     throw error;
   }
@@ -62,9 +81,9 @@ export async function POST(request: Request) {
   const d = body.details;
   const stripe = getStripe();
 
-  // Everything the webhook will need to build the Shopify order, carried on the
-  // PaymentIntent itself. Stripe caps each metadata value at 500 characters, so
-  // the lines go in as a compact "productId:qty" list rather than JSON.
+  // The order, carried on the PaymentIntent itself, so fulfilment has what it
+  // needs from the payment alone. Stripe caps each metadata value at 500
+  // characters, so the lines go in as a compact "productId:qty" list.
   const metadata: Record<string, string> = {
     lines: priced.lines.map((l) => `${l.productId}:${l.quantity}`).join(","),
     ...(d && {
@@ -111,6 +130,7 @@ export async function POST(request: Request) {
           clientSecret: updated.client_secret,
           paymentIntentId: updated.id,
           amount: updated.amount,
+          currency: updated.currency,
         });
       }
     }
@@ -129,6 +149,7 @@ export async function POST(request: Request) {
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
       amount: intent.amount,
+      currency: intent.currency,
     });
   } catch (error) {
     // Never hand a Stripe error string to the browser: it can name internal

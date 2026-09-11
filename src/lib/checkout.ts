@@ -1,15 +1,12 @@
 // Checkout configuration.
 //
-// No payment processor is connected. That is a deliberate stopping point, not
-// an oversight: collecting card details into a form that goes nowhere invites
-// people to type real card numbers into a page that cannot protect or charge
-// them. So the flow gathers contact and delivery details, shows the order, and
-// then hands off.
+// Stripe takes the payment, on this page, through the Payment Element. There
+// is no redirect to a hosted checkout: the customer stays on the Glow
+// checkout from cart to confirmation.
 //
-// To go live, integrate a processor (Stripe Checkout, Shopify, Paddle et al.)
-// and point PROCESSOR at it. Card data should never touch this codebase --
-// every mainstream processor provides a hosted page or an iframed element so
-// the numbers go straight to them.
+// Card data still never touches this codebase. The Payment Element is an
+// iframe served by Stripe, so the numbers go straight to them and this site
+// stays out of PCI scope.
 
 export const PROCESSOR: {
   connected: boolean;

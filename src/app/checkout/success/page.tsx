@@ -3,8 +3,8 @@
 // This page creates nothing. It reads the PaymentIntent's status and reports
 // it, and that is all it is allowed to do: anyone can type this URL, refresh
 // it, or share it, and a customer who pays may close the tab before ever
-// arriving. The Shopify order is created by the Stripe webhook, which only
-// trusts a request Stripe signed.
+// arriving. Payment is recorded by Stripe; whatever fulfilment is connected
+// later must read it from there, never from a page load.
 
 "use client";
 
