@@ -21,16 +21,18 @@ import { primitive, semantic } from "@/styles/tokens";
 export type ConfirmPayment = (returnUrl: string) => Promise<string | null>;
 
 /**
- * loadStripe outside the component: called once per page load, not once per
- * render. The publishable key is meant to be public -- it can only create
- * payments, never read or refund them.
+ * loadStripe is called once per key, not once per render, and the result is
+ * cached. The key arrives as a prop rather than being read from the build-time
+ * environment, so a key configured after the last deploy still works.
  */
-let stripePromise: Promise<Stripe | null> | null = null;
-const getStripePromise = () => {
-  const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-  if (!key) return null;
-  stripePromise ??= loadStripe(key);
-  return stripePromise;
+const stripePromises = new Map<string, Promise<Stripe | null>>();
+const getStripePromise = (key: string) => {
+  let promise = stripePromises.get(key);
+  if (!promise) {
+    promise = loadStripe(key);
+    stripePromises.set(key, promise);
+  }
+  return promise;
 };
 
 /** Stripe's iframe cannot read the page's CSS, so the tokens are passed in. */
@@ -105,21 +107,15 @@ const ConfirmBridge = ({ onReady }: { onReady: (confirm: ConfirmPayment | null) 
 };
 
 export const PaymentSection = ({
+  publishableKey,
   clientSecret,
   onConfirmReady,
 }: {
+  publishableKey: string;
   clientSecret: string | null;
   onConfirmReady: (confirm: ConfirmPayment | null) => void;
 }) => {
-  const stripe = getStripePromise();
-
-  if (!stripe) {
-    return (
-      <p className="text-sm" style={{ color: semantic.text.secondary }}>
-        Card payments are not available right now.
-      </p>
-    );
-  }
+  const stripe = getStripePromise(publishableKey);
 
   if (!clientSecret) {
     // Reserve the height the element will take, so filling in the address does
