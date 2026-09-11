@@ -9,7 +9,7 @@ import { Footer } from "@/components/website-layouts";
 import { ProductImage } from "@/components/product-image";
 import { AllergenNotice } from "@/components/allergen-notice";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/currency";
+import { formatAmount, formatPrice } from "@/lib/currency";
 import { calculateShipping } from "@/lib/shipping";
 import { track } from "@/lib/analytics";
 import {
@@ -43,40 +43,81 @@ export default function CheckoutPage() {
   const [intentId, setIntentId] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  // What the server says this order costs, in the smallest unit of the Stripe
+  // price's currency. Authoritative: the cart total below is worked out from
+  // local product data, this is the number that will actually be charged.
+  const [amount, setAmount] = useState<number | null>(null);
+  const [currency, setCurrency] = useState<string | null>(null);
+  const [intentError, setIntentError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
   const confirmRef = useRef<ConfirmPayment | null>(null);
+  // Also held in a ref so the pricing effect can reuse the open intent without
+  // listing it as a dependency -- it is the effect that sets it, and depending
+  // on it would mean the effect stops running the moment it succeeds.
+  const intentIdRef = useRef<string | null>(null);
   const onConfirmReady = useCallback((fn: ConfirmPayment | null) => {
     confirmRef.current = fn;
   }, []);
 
   // Open a PaymentIntent as soon as there is a cart, so the card box is present
   // while the customer fills the address in rather than appearing underneath
-  // them at the end. The amount is worked out on the server from the product
-  // data; nothing here tells it a price.
+  // them at the end. The amount is worked out on the server from the live
+  // Stripe price; nothing here tells it what anything costs.
+  //
+  // Keyed on the cart's contents rather than the items array, whose identity
+  // changes on every render. Re-runs when the cart changes, so the total on
+  // screen is always the one the open intent will charge.
+  const lineKey = items.map((i) => `${i.productId}:${i.quantity}`).join(",");
+
   useEffect(() => {
-    if (items.length === 0 || intentId) return;
+    if (!lineKey) return;
     let cancelled = false;
+    setIntentError(null);
     (async () => {
       try {
+        const lines = lineKey.split(",").map((pair) => {
+          const [productId, quantity] = pair.split(":");
+          return { productId, quantity: Number(quantity) };
+        });
         const res = await fetch("/api/checkout/payment-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            lines: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-          }),
+          body: JSON.stringify({ lines, paymentIntentId: intentIdRef.current ?? undefined }),
         });
-        if (!res.ok) return;
-        const data = (await res.json()) as { clientSecret: string; paymentIntentId: string };
+        const data = (await res.json().catch(() => null)) as
+          | { clientSecret: string; paymentIntentId: string; amount: number; currency: string }
+          | { error?: string }
+          | null;
         if (cancelled) return;
+
+        // Say so, rather than leaving a disabled button and a shimmer that
+        // never resolves. The customer can retry without losing what they typed.
+        if (!res.ok || !data || !("clientSecret" in data)) {
+          setIntentError(
+            (data && "error" in data && data.error) ||
+              "Could not start the payment. Please try again.",
+          );
+          return;
+        }
+
+        // Reusing the intent returns the same client secret, so setting it
+        // again is a no-op and the card the customer already typed is not
+        // wiped by a remount of the Payment Element.
+        intentIdRef.current = data.paymentIntentId;
         setClientSecret(data.clientSecret);
         setIntentId(data.paymentIntentId);
+        setAmount(data.amount);
+        setCurrency(data.currency);
       } catch {
-        /* the card box stays in its loading state; Place Order reports it */
+        if (!cancelled) {
+          setIntentError("Could not reach the payment service. Check your connection and try again.");
+        }
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [items, intentId]);
+  }, [lineKey, retry]);
 
   const set = (field: keyof CheckoutDetails, value: string) => {
     setDetails((d) => ({ ...d, [field]: value }));
@@ -104,9 +145,10 @@ export default function CheckoutPage() {
     track({ name: "begin_checkout", value: total, items: items.length });
 
     try {
-      // Attach the delivery details to the PaymentIntent before confirming.
-      // The webhook builds the Shopify order from this metadata, so it has to
-      // be on the intent before the money moves, not after.
+      // Attach the delivery details to the PaymentIntent before confirming, so
+      // the payment carries the address it was taken for. This also re-prices
+      // the order, which is the last word on the amount before the card is
+      // charged.
       const res = await fetch("/api/checkout/payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,10 +158,19 @@ export default function CheckoutPage() {
           paymentIntentId: intentId,
         }),
       });
-      if (!res.ok) {
-        setPayError("Could not prepare the payment. Check your details and try again.");
+      const prepared = (await res.json().catch(() => null)) as
+        | { amount: number; currency: string }
+        | { error?: string }
+        | null;
+      if (!res.ok || !prepared || !("amount" in prepared)) {
+        setPayError(
+          (prepared && "error" in prepared && prepared.error) ||
+            "Could not prepare the payment. Check your details and try again.",
+        );
         return;
       }
+      setAmount(prepared.amount);
+      setCurrency(prepared.currency);
 
       const message = await confirm(`${window.location.origin}/checkout/success`);
       if (message) {
@@ -127,7 +178,9 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Paid. The order itself is created by the Stripe webhook, never here.
+      // Paid. Fulfilment reads the order off the PaymentIntent's metadata;
+      // nothing is created here, because a customer can close the tab between
+      // the charge and this line running.
       setSubmitted(true);
       window.location.assign(`/checkout/success?payment_intent=${intentId}`);
     } catch {
@@ -136,6 +189,14 @@ export default function CheckoutPage() {
       setPaying(false);
     }
   };
+
+  // Prefer the server's figure once it exists: it comes from the Stripe price
+  // that will charge the card. The locally computed total is the fallback for
+  // the moment before the intent is open, so the summary is never blank.
+  const displayTotal =
+    amount !== null
+      ? formatAmount(amount, currency ?? undefined)
+      : formatPrice(total + (shipping.cost ?? 0));
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: semantic.surface.page }}>
@@ -224,14 +285,52 @@ export default function CheckoutPage() {
                     {/* Stripe's Payment Element. The card number goes straight
                         to Stripe in its own iframe and never touches this
                         site. */}
-                    <PaymentSection
-                      clientSecret={clientSecret}
-                      onConfirmReady={onConfirmReady}
-                    />
-                    <p className="text-xs mt-3" style={{ color: semantic.text.muted }}>
-                      Payment is handled securely by {PROCESSOR.name}. Your card
-                      details never reach this site.
-                    </p>
+                    {intentError ? (
+                      <div
+                        className="flex gap-3 p-5"
+                        style={{
+                          backgroundColor: semantic.surface.tint,
+                          border: `1px solid ${semantic.state.error}`,
+                        }}
+                        role="alert"
+                      >
+                        <AlertCircle
+                          className="w-4 h-4 shrink-0 mt-0.5"
+                          style={{ color: semantic.state.error }}
+                          aria-hidden="true"
+                        />
+                        <div className="text-sm leading-relaxed" style={{ color: semantic.text.secondary }}>
+                          <strong style={{ color: semantic.text.primary }}>
+                            The payment form could not be loaded.
+                          </strong>{" "}
+                          {intentError}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              intentIdRef.current = null;
+                              setIntentId(null);
+                              setClientSecret(null);
+                              setRetry((n) => n + 1);
+                            }}
+                            className="block mt-3 underline underline-offset-2"
+                            style={{ color: semantic.text.primary }}
+                          >
+                            Try again
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <PaymentSection
+                          clientSecret={clientSecret}
+                          onConfirmReady={onConfirmReady}
+                        />
+                        <p className="text-xs mt-3" style={{ color: semantic.text.muted }}>
+                          Payment is handled securely by {PROCESSOR.name}. Your
+                          card details never reach this site.
+                        </p>
+                      </>
+                    )}
                   </>
                 ) : (
                   <div
@@ -300,7 +399,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={paying || (PROCESSOR.connected && !clientSecret)}
+                  disabled={paying || (PROCESSOR.connected && (!clientSecret || Boolean(intentError)))}
                   className="w-full mt-6 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
                   style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
                 >
@@ -308,7 +407,7 @@ export default function CheckoutPage() {
                     ? "Continue to payment"
                     : paying
                       ? "Taking payment…"
-                      : `Place order — ${formatPrice(total + (shipping.cost ?? 0))}`}
+                      : `Place order — ${displayTotal}`}
                 </button>
 
                 <p
@@ -391,7 +490,7 @@ export default function CheckoutPage() {
                       className="font-[family-name:var(--font-playfair)] text-2xl tabular-nums"
                       style={{ color: semantic.text.primary }}
                     >
-                      {formatPrice(total + (shipping.cost ?? 0))}
+                      {displayTotal}
                     </dd>
                   </div>
                 </dl>

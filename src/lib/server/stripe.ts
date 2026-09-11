@@ -29,9 +29,3 @@ export function getStripe(): Stripe {
   }
   return client;
 }
-
-/**
- * Every PaymentIntent carries the tag the webhook uses to find, or avoid
- * re-creating, its Shopify order. One place so the two sides cannot disagree.
- */
-export const shopifyTagFor = (paymentIntentId: string) => `stripe_pi_${paymentIntentId}`;
