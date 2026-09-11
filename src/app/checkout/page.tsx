@@ -50,6 +50,12 @@ export default function CheckoutPage() {
   const [currency, setCurrency] = useState<string | null>(null);
   const [intentError, setIntentError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  // Whether payments are available is answered by the server on each page
+  // load, not baked in when the site was built. "checking" is a real state:
+  // showing the "no processor connected" notice while the answer is still in
+  // flight would tell every customer the shop is broken for a moment.
+  const [publishableKey, setPublishableKey] = useState<string | null>(null);
+  const [configState, setConfigState] = useState<"checking" | "ready" | "unavailable">("checking");
   const confirmRef = useRef<ConfirmPayment | null>(null);
   // Also held in a ref so the pricing effect can reuse the open intent without
   // listing it as a dependency -- it is the effect that sets it, and depending
@@ -58,6 +64,29 @@ export default function CheckoutPage() {
   const onConfirmReady = useCallback((fn: ConfirmPayment | null) => {
     confirmRef.current = fn;
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/checkout/config")
+      .then((r) => r.json())
+      .then((data: { publishableKey: string | null }) => {
+        if (cancelled) return;
+        if (data.publishableKey) {
+          setPublishableKey(data.publishableKey);
+          setConfigState("ready");
+        } else {
+          setConfigState("unavailable");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setConfigState("unavailable");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const paymentsReady = configState === "ready" && publishableKey !== null;
 
   // Open a PaymentIntent as soon as there is a cart, so the card box is present
   // while the customer fills the address in rather than appearing underneath
@@ -70,7 +99,7 @@ export default function CheckoutPage() {
   const lineKey = items.map((i) => `${i.productId}:${i.quantity}`).join(",");
 
   useEffect(() => {
-    if (!lineKey) return;
+    if (!lineKey || !paymentsReady) return;
     let cancelled = false;
     setIntentError(null);
     (async () => {
@@ -117,7 +146,7 @@ export default function CheckoutPage() {
     return () => {
       cancelled = true;
     };
-  }, [lineKey, retry]);
+  }, [lineKey, retry, paymentsReady]);
 
   const set = (field: keyof CheckoutDetails, value: string) => {
     setDetails((d) => ({ ...d, [field]: value }));
@@ -280,7 +309,13 @@ export default function CheckoutPage() {
                   Payment
                 </h2>
 
-                {PROCESSOR.connected ? (
+                {configState === "checking" ? (
+                  <div
+                    className="animate-pulse"
+                    style={{ height: 180, backgroundColor: semantic.surface.sunken }}
+                    aria-hidden="true"
+                  />
+                ) : paymentsReady ? (
                   <>
                     {/* Stripe's Payment Element. The card number goes straight
                         to Stripe in its own iframe and never touches this
@@ -322,6 +357,7 @@ export default function CheckoutPage() {
                     ) : (
                       <>
                         <PaymentSection
+                          publishableKey={publishableKey}
                           clientSecret={clientSecret}
                           onConfirmReady={onConfirmReady}
                         />
@@ -366,7 +402,7 @@ export default function CheckoutPage() {
                   </p>
                 )}
 
-                {submitted && !PROCESSOR.connected && (
+                {submitted && !paymentsReady && (
                   <div
                     className="mt-5 p-5 text-sm leading-relaxed"
                     style={{
@@ -399,13 +435,19 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={paying || (PROCESSOR.connected && (!clientSecret || Boolean(intentError)))}
+                  disabled={
+                    paying ||
+                    configState === "checking" ||
+                    (paymentsReady && (!clientSecret || Boolean(intentError)))
+                  }
                   className="w-full mt-6 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
                   style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
                 >
-                  {!PROCESSOR.connected
-                    ? "Continue to payment"
-                    : paying
+                  {configState === "checking"
+                    ? "Loading…"
+                    : !paymentsReady
+                      ? "Continue to payment"
+                      : paying
                       ? "Taking payment…"
                       : `Place order — ${displayTotal}`}
                 </button>

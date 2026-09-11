@@ -30,18 +30,27 @@ const Confirmation = () => {
   const [state, setState] = useState<State>({ kind: "loading" });
 
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
     const secret = params.get("payment_intent_client_secret");
 
     // Arriving without a client secret is normal -- a card finishes in place
-    // and we redirect here ourselves. Trust the webhook, say the calm thing.
-    if (!key || !secret) {
+    // and we redirect here ourselves. Say the calm thing.
+    if (!secret) {
       setState({ kind: "paid" });
       return;
     }
 
     let cancelled = false;
     (async () => {
+      // The key comes from the server at request time, the same way the
+      // checkout gets it, rather than from the build-time environment.
+      const config = (await fetch("/api/checkout/config")
+        .then((r) => r.json())
+        .catch(() => null)) as { publishableKey: string | null } | null;
+      const key = config?.publishableKey;
+      if (!key || cancelled) {
+        if (!cancelled) setState({ kind: "paid" });
+        return;
+      }
       const stripe = await loadStripe(key);
       if (!stripe || cancelled) return;
       const { paymentIntent } = await stripe.retrievePaymentIntent(secret);

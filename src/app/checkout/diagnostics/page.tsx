@@ -12,9 +12,10 @@
 
 import { useEffect, useState } from "react";
 
-// Read as a direct static reference so Next.js inlines it at build time. If it
-// was not set when this deployment was built, it is the empty string here no
-// matter what the dashboard says now.
+// Kept only to show the contrast: this is the old build-time route, and it is
+// empty whenever the key was configured after the last deploy. The checkout no
+// longer depends on it -- it asks /api/checkout/config at request time -- so a
+// FAIL on this line is now harmless rather than fatal.
 const BAKED_IN_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
 
 interface Check {
@@ -39,12 +40,18 @@ const Row = ({ ok, children }: { ok: boolean; children: React.ReactNode }) => (
 export default function DiagnosticsPage() {
   const [report, setReport] = useState<Report | null>(null);
   const [failed, setFailed] = useState(false);
+  const [runtimeKey, setRuntimeKey] = useState<string | null | "pending">("pending");
 
   useEffect(() => {
     fetch("/api/checkout/diagnostics")
       .then((r) => r.json())
       .then(setReport)
       .catch(() => setFailed(true));
+    // The check that now decides whether the card box appears.
+    fetch("/api/checkout/config")
+      .then((r) => r.json())
+      .then((d: { publishableKey: string | null }) => setRuntimeKey(d.publishableKey))
+      .catch(() => setRuntimeKey(null));
   }, []);
 
   const server = report?.checks;
@@ -57,28 +64,33 @@ export default function DiagnosticsPage() {
         Temporary page. Delete it once card payments work.
       </p>
 
-      <h2 style={{ fontSize: 17, marginBottom: 10 }}>1. What the browser can see</h2>
+      <h2 style={{ fontSize: 17, marginBottom: 10 }}>
+        1. Can the checkout show a card box?
+      </h2>
       <ul style={{ paddingLeft: 0, listStyle: "none", marginBottom: 28 }}>
-        <Row ok={Boolean(BAKED_IN_KEY)}>
-          The publishable key {BAKED_IN_KEY ? "was" : "was NOT"} built into this page.
-          {!BAKED_IN_KEY && (
-            <div style={{ color: "#c5221f", marginTop: 6 }}>
-              This is why checkout says no payment processor is connected. The
-              variable must be named exactly
-              {" "}<code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code>, be ticked for
-              Production, and then the site must be redeployed — saving it alone
-              does nothing, because this value is fixed at build time.
-            </div>
-          )}
-        </Row>
-        {BAKED_IN_KEY && (
-          <Row ok={BAKED_IN_KEY.startsWith("pk_")}>
-            It starts with <code>{BAKED_IN_KEY.slice(0, 7)}</code>
-            {BAKED_IN_KEY.startsWith("pk_")
-              ? " — correct."
-              : " — WRONG. A publishable key starts with pk_. If this starts with sk_, remove it immediately: that is your secret key and it is now public."}
+        {runtimeKey === "pending" ? (
+          <li style={{ color: "#666" }}>Checking…</li>
+        ) : (
+          <Row ok={Boolean(runtimeKey)}>
+            {runtimeKey
+              ? `Yes. The server supplied a publishable key (${runtimeKey.slice(0, 7)}…), so the card box will appear.`
+              : "No. The server has no Stripe publishable key."}
+            {!runtimeKey && (
+              <div style={{ color: "#c5221f", marginTop: 6 }}>
+                Add it in your hosting dashboard, named either{" "}
+                <code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> or{" "}
+                <code>STRIPE_PUBLISHABLE_KEY</code> — both work now — ticked for
+                Production, with a value starting <code>pk_</code>. Then reload
+                this page. No redeploy needed.
+              </div>
+            )}
           </Row>
         )}
+        <Row ok={true}>
+          {BAKED_IN_KEY
+            ? "The key was also built into the page itself."
+            : "The key was not built into the page — which no longer matters, since the checkout asks the server instead."}
+        </Row>
       </ul>
 
       <h2 style={{ fontSize: 17, marginBottom: 10 }}>2. What the server can see</h2>

@@ -8,15 +8,12 @@
 // iframe served by Stripe, so the numbers go straight to them and this site
 // stays out of PCI scope.
 
-export const PROCESSOR: {
-  connected: boolean;
-  name: string | null;
-} = {
-  // Derived from the publishable key rather than hardcoded, so a deployment
-  // without Stripe configured shows the honest "cannot take payment" notice
-  // instead of a card box that could never work. The publishable key is safe in
-  // the browser by design -- it can start a payment, never read or refund one.
-  connected: Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY),
+// Whether payments are actually available is decided at request time, by
+// /api/checkout/config, not here. It used to be read from the build-time
+// environment, which meant a key added after the last deploy was invisible to
+// the browser and the checkout insisted no processor was connected while the
+// dashboard said otherwise.
+export const PROCESSOR: { name: string } = {
   name: "Stripe",
 };
 
