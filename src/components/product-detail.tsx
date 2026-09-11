@@ -21,6 +21,7 @@ import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/hooks/useCart";
+import { FreeShippingBadge } from "@/components/free-shipping-badge";
 import { semantic } from "@/styles/tokens";
 
 // Photographs, not the composited hero layers: each one already carries its
@@ -135,17 +136,11 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                 >
                   {formatPrice(price)}
                 </span>
+                <FreeShippingBadge />
               </div>
-              <p className="text-sm mb-2" style={{ color: semantic.text.muted }}>
+              <p className="text-sm mb-8" style={{ color: semantic.text.muted }}>
                 {product.flavor} · {product.serving.gummy_count} gummies ·{" "}
                 {product.serving.per_container} days
-              </p>
-              <p
-                className="flex items-center gap-1.5 text-sm mb-8"
-                style={{ color: semantic.text.primary }}
-              >
-                <Truck className="w-4 h-4" style={{ color: semantic.accent.metallic }} />
-                Free shipping
               </p>
 
               {/* Quantity */}

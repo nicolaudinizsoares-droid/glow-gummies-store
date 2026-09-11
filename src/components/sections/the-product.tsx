@@ -6,6 +6,7 @@ import { ProductImage } from "@/components/product-image";
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { products } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
+import { FreeShippingBadge } from "@/components/free-shipping-badge";
 import { semantic } from "@/styles/tokens";
 
 const product = products[0];
@@ -65,6 +66,7 @@ export const TheProduct = () => (
           >
             {formatPrice(product.pricing.selling_price)}
           </span>
+          <FreeShippingBadge />
         </div>
 
         <Link
