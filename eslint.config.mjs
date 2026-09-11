@@ -18,6 +18,11 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Reference material, not source. docs/bottle-scene-reference.js is a
+      // standalone Three.js scene that assumes globals supplied by its viewer,
+      // so linting it as project source reports undefined names that are
+      // correct in the context it actually runs in.
+      "docs/**",
     ],
   },
 ];
