@@ -15,60 +15,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { loadShopifySdk } from "@/lib/shopify-sdk";
 import { SHOPIFY_BUY, MONEY_FORMAT } from "@/lib/shopify-buy";
 import { primitive, semantic } from "@/styles/tokens";
-
-interface BuyButtonUI {
-  createComponent: (type: string, options: Record<string, unknown>) => Promise<unknown>;
-  destroyComponent?: (type: string, id: string) => void;
-}
-
-interface ShopifyBuySDK {
-  buildClient: (config: { domain: string; storefrontAccessToken: string }) => unknown;
-  UI?: { onReady: (client: unknown) => Promise<BuyButtonUI> };
-}
-
-declare global {
-  interface Window {
-    ShopifyBuy?: ShopifyBuySDK;
-  }
-}
-
-const SDK_URL = "https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js";
-
-/**
- * One load per page, shared by every instance. Held at module scope rather
- * than in state because two components mounting together must wait on the same
- * script tag, not race to append two.
- */
-let sdkPromise: Promise<ShopifyBuySDK> | null = null;
-
-function loadSdk(): Promise<ShopifyBuySDK> {
-  if (window.ShopifyBuy?.UI) return Promise.resolve(window.ShopifyBuy);
-
-  sdkPromise ??= new Promise<ShopifyBuySDK>((resolve, reject) => {
-    // An existing tag means another instance is already loading it; wait on
-    // that one rather than adding a second.
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${SDK_URL}"]`);
-    const script = existing ?? document.createElement("script");
-
-    const done = () => {
-      if (window.ShopifyBuy) resolve(window.ShopifyBuy);
-      else reject(new Error("Shopify SDK loaded but did not register."));
-    };
-
-    script.addEventListener("load", done);
-    script.addEventListener("error", () => reject(new Error("Could not load the Shopify SDK.")));
-
-    if (!existing) {
-      script.async = true;
-      script.src = SDK_URL;
-      document.head.appendChild(script);
-    }
-  });
-
-  return sdkPromise;
-}
 
 /* Glow's type and colour, expressed in the shape Shopify's styling API wants. */
 const FONT_STACK = "Inter, system-ui, -apple-system, sans-serif";
@@ -176,7 +125,7 @@ export const ShopifyBuyButton = ({ className }: { className?: string }) => {
     const target = node.current;
     let cancelled = false;
 
-    loadSdk()
+    loadShopifySdk()
       .then((sdk) => {
         if (cancelled || !sdk.UI) return;
         const client = sdk.buildClient({
