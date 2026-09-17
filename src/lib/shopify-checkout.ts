@@ -76,17 +76,48 @@ async function firstVariantId(numericId: string): Promise<string> {
 }
 
 /**
- * Build a Shopify checkout for the given cart and return its URL.
+ * Shopify variant ids arrive from the SDK as a Storefront gid, sometimes
+ * base64-encoded. A cart permalink wants the bare number at the end of it.
+ */
+function numericVariantId(raw: string): string {
+  let id = raw;
+  // Base64-encoded gid: decode before parsing.
+  if (!id.startsWith("gid://") && /^[A-Za-z0-9+/=]+$/.test(id)) {
+    try {
+      const decoded = window.atob(id);
+      if (decoded.startsWith("gid://")) id = decoded;
+    } catch {
+      /* not base64 after all; fall through and try the digits */
+    }
+  }
+  const match = id.match(/(\d+)\s*$/);
+  if (!match) {
+    throw new ShopifyCheckoutError(`Could not read a variant id from "${raw}".`);
+  }
+  return match[1];
+}
+
+/**
+ * Build the Shopify checkout URL for the given cart.
  *
- * Throws rather than returning a partial checkout: sending someone to pay for
- * some of what they chose is worse than not sending them at all.
+ * A cart permalink -- /cart/<variantId>:<quantity> -- rather than the
+ * Storefront checkout mutation. That mutation is the deprecated Checkout API,
+ * and on a store created after Shopify began retiring it, it returns a
+ * checkout whose line items then fail to resolve: the customer reaches a
+ * payment page that says the item is no longer available while the admin shows
+ * it in stock. The permalink is Shopify's own long-standing route into
+ * checkout, has no API version to fall out of date, and builds the cart from
+ * the same variant ids.
+ *
+ * Throws rather than returning a partial cart: sending someone to pay for some
+ * of what they chose is worse than not sending them at all.
  */
 export async function createCheckoutUrl(lines: CartLine[]): Promise<string> {
   if (lines.length === 0) {
     throw new ShopifyCheckoutError("The cart is empty.");
   }
 
-  const lineItems: { variantId: string; quantity: number }[] = [];
+  const parts: string[] = [];
 
   for (const line of lines) {
     const shopifyProductId = SHOPIFY_PRODUCT_BY_LOCAL_ID[line.productId];
@@ -95,14 +126,14 @@ export async function createCheckoutUrl(lines: CartLine[]): Promise<string> {
     }
 
     const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
-    lineItems.push({ variantId: await firstVariantId(shopifyProductId), quantity });
+    const variantId = numericVariantId(await firstVariantId(shopifyProductId));
+
+    // Logged so a checkout that Shopify rejects can be traced to the exact
+    // variant it was built from, without guessing at the admin.
+    console.info("[checkout] variant", variantId, "x", quantity);
+
+    parts.push(`${variantId}:${quantity}`);
   }
 
-  const shopify = await getClient();
-  const checkout = await shopify.checkout.create({ lineItems });
-
-  if (!checkout?.webUrl) {
-    throw new ShopifyCheckoutError("Shopify did not return a checkout URL.");
-  }
-  return checkout.webUrl;
+  return `https://${SHOPIFY_BUY.domain}/cart/${parts.join(",")}`;
 }
