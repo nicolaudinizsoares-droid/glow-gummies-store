@@ -13,7 +13,11 @@
 // the customer sent to Shopify, but the sale cannot complete.
 
 export const SHOPIFY_BUY = {
-  domain: "rzdvw9-uk.myshopify.com",
+  // The store's primary domain, not its myshopify.com address. The SDK builds
+  // checkout URLs against whatever is given here, so pointing it at the
+  // myshopify address sends customers to a checkout branded
+  // rzdvw9-uk.myshopify.com however the Shopify dashboard is configured.
+  domain: "shop.glowgummies.org",
   storefrontAccessToken: "5509ec95f0ce8c5d1c01993764bf7e72",
   /** Shopify product id for Glow Gummies, used by the /buy widget. */
   productId: "10597516738741",
