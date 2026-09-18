@@ -13,7 +13,7 @@
 "use client";
 
 import { loadShopifySdk, type ShopifyClient } from "@/lib/shopify-sdk";
-import { SHOPIFY_BUY, SHOPIFY_PRODUCT_BY_LOCAL_ID } from "@/lib/shopify-buy";
+import { SHOPIFY_BUY, SHOPIFY_PRODUCT_BY_LOCAL_ID, SKU_BY_LOCAL_ID } from "@/lib/shopify-buy";
 
 export interface CartLine {
   productId: string;
@@ -53,26 +53,60 @@ function idCandidates(numericId: string): string[] {
 
 const variantCache = new Map<string, string>();
 
-async function firstVariantId(numericId: string): Promise<string> {
-  const cached = variantCache.get(numericId);
+/**
+ * Find the variant for a local product.
+ *
+ * The configured Shopify id is tried first, because it is one request. But a
+ * numeric product id does not survive the product being recreated -- deleting
+ * and re-adding it, or an integration republishing it, mints a new one -- and
+ * when that happened here the checkout button simply stopped working with
+ * nothing in the store to explain it. So a miss falls back to the SKU, which
+ * survives all of that, and the customer never sees the difference.
+ */
+async function variantFor(localProductId: string): Promise<string> {
+  const cached = variantCache.get(localProductId);
   if (cached) return cached;
 
   const shopify = await getClient();
+  const numericId = SHOPIFY_PRODUCT_BY_LOCAL_ID[localProductId];
 
-  for (const candidate of idCandidates(numericId)) {
+  if (numericId) {
+    for (const candidate of idCandidates(numericId)) {
+      try {
+        const product = await shopify.product.fetch(candidate);
+        const variantId = product?.variants?.[0]?.id;
+        if (variantId) {
+          variantCache.set(localProductId, variantId);
+          return variantId;
+        }
+      } catch {
+        /* wrong id spelling for this SDK build, or the product is gone */
+      }
+    }
+    console.warn(
+      `[checkout] Shopify product ${numericId} did not resolve; falling back to SKU. Update SHOPIFY_BUY.productId.`,
+    );
+  }
+
+  const sku = SKU_BY_LOCAL_ID[localProductId];
+  if (sku) {
     try {
-      const product = await shopify.product.fetch(candidate);
-      const variantId = product?.variants?.[0]?.id;
-      if (variantId) {
-        variantCache.set(numericId, variantId);
-        return variantId;
+      const products = await shopify.product.fetchAll(50);
+      for (const product of products) {
+        const match = product.variants?.find((v) => v.sku === sku);
+        if (match?.id) {
+          variantCache.set(localProductId, match.id);
+          return match.id;
+        }
       }
     } catch {
-      /* wrong id spelling for this SDK build; try the next */
+      /* fall through to the error below, which says something useful */
     }
   }
 
-  throw new ShopifyCheckoutError(`No Shopify variant found for product ${numericId}.`);
+  throw new ShopifyCheckoutError(
+    `No Shopify variant found for ${localProductId} (id ${numericId ?? "unset"}, sku ${sku ?? "unset"}).`,
+  );
 }
 
 /**
@@ -120,13 +154,12 @@ export async function createCheckoutUrl(lines: CartLine[]): Promise<string> {
   const parts: string[] = [];
 
   for (const line of lines) {
-    const shopifyProductId = SHOPIFY_PRODUCT_BY_LOCAL_ID[line.productId];
-    if (!shopifyProductId) {
+    if (!SHOPIFY_PRODUCT_BY_LOCAL_ID[line.productId] && !SKU_BY_LOCAL_ID[line.productId]) {
       throw new ShopifyCheckoutError(`No Shopify product mapped for ${line.productId}.`);
     }
 
     const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
-    const variantId = numericVariantId(await firstVariantId(shopifyProductId));
+    const variantId = numericVariantId(await variantFor(line.productId));
 
     // Logged so a checkout that Shopify rejects can be traced to the exact
     // variant it was built from, without guessing at the admin.

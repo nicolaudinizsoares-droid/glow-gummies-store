@@ -19,8 +19,17 @@ export const SHOPIFY_BUY = {
   // rzdvw9-uk.myshopify.com however the Shopify dashboard is configured.
   domain: "shop.glowgummies.org",
   storefrontAccessToken: "5509ec95f0ce8c5d1c01993764bf7e72",
-  /** Shopify product id for Glow Gummies, used by the /buy widget. */
-  productId: "10597516738741",
+  /**
+   * Shopify product id for Glow Gummies, used by the /buy widget and as the
+   * fast path for checkout.
+   *
+   * A numeric id does not survive the product being recreated -- deleting and
+   * re-adding it, or letting an integration republish it, mints a new one and
+   * leaves this pointing at nothing. Checkout therefore falls back to matching
+   * on SKU, which is stable across all of that. Keep this current anyway: the
+   * fallback costs an extra request.
+   */
+  productId: "10607141716149",
 } as const;
 
 /**
@@ -33,6 +42,14 @@ export const SHOPIFY_BUY = {
  */
 export const SHOPIFY_PRODUCT_BY_LOCAL_ID: Record<string, string> = {
   "GLW-HSN-001": SHOPIFY_BUY.productId,
+};
+
+/**
+ * SKU per local product, used to find the Shopify variant when the id above no
+ * longer resolves. Must match the SKU set on the variant in Shopify.
+ */
+export const SKU_BY_LOCAL_ID: Record<string, string> = {
+  "GLW-HSN-001": "GLOW-HSN-PF-60",
 };
 
 /** Shopify's own money format token, decoded from the snippet's %24%7B%7B... */

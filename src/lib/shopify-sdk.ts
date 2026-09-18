@@ -9,9 +9,13 @@
 
 export interface ShopifyVariant {
   id: string;
+  sku?: string | null;
+  available?: boolean;
 }
 
 export interface ShopifyProduct {
+  id?: string;
+  title?: string;
   variants: ShopifyVariant[];
 }
 
@@ -24,7 +28,10 @@ export interface BuyButtonUI {
 }
 
 export interface ShopifyClient {
-  product: { fetch: (id: string) => Promise<ShopifyProduct> };
+  product: {
+    fetch: (id: string) => Promise<ShopifyProduct>;
+    fetchAll: (pageSize?: number) => Promise<ShopifyProduct[]>;
+  };
   checkout: {
     create: (input: {
       lineItems: { variantId: string; quantity: number }[];
