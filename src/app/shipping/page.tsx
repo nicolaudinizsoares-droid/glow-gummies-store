@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageShell, Section, NeedsReview } from "@/components/page-shell";
+import { PageShell, Section } from "@/components/page-shell";
 
 export const metadata: Metadata = {
   title: "Shipping | Glow",
@@ -29,13 +29,6 @@ export default function ShippingPage() {
           Business days do not include weekends or public holidays, so an order
           placed on a Friday is usually with you the following week.
         </p>
-      </Section>
-
-      <Section heading="Where we ship">
-        <NeedsReview>
-          Confirm which countries or states Glow ships to. Dietary supplements
-          face import restrictions in some markets.
-        </NeedsReview>
       </Section>
     </PageShell>
   );
