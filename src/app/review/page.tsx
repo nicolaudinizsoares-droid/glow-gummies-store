@@ -9,7 +9,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Star, Check } from "lucide-react";
 
 import { Navigation } from "@/components/navigation";
@@ -25,6 +25,9 @@ export default function ReviewPage() {
   const [hover, setHover] = useState(0);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // When the form was first rendered. A bot fills and submits in well under a
+  // second; a person choosing a rating and writing a sentence does not.
+  const openedAt = useRef(Date.now());
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,6 +39,20 @@ export default function ReviewPage() {
     if (!REVIEW_INTAKE.connected || !REVIEW_INTAKE.endpoint) return;
 
     const form = new FormData(e.currentTarget);
+
+    // Two cheap filters that cost a real reviewer nothing.
+    //
+    // The honeypot is a field hidden from sight and from screen readers, which
+    // a person therefore never fills in; scripted submitters fill every input
+    // they find. The timing check catches the rest. Both fail silently and
+    // show the thank-you, because telling a bot why it was rejected only helps
+    // it try again.
+    const trap = form.get("website");
+    const tooFast = Date.now() - openedAt.current < 3000;
+    if ((typeof trap === "string" && trap.trim() !== "") || tooFast) {
+      setSent(true);
+      return;
+    }
     try {
       await fetch(REVIEW_INTAKE.endpoint, {
         method: "POST",
@@ -102,6 +119,19 @@ export default function ReviewPage() {
             </div>
           ) : (
             <form onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
+              {/* Honeypot. Hidden from sight and from assistive technology, and
+                  excluded from tab order, so no person ever meets it. */}
+              <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>
+                <label htmlFor="website">Do not fill this in</label>
+                <input
+                  id="website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+
               <fieldset className="border-0 p-0 m-0">
                 <legend className="eyebrow mb-3">Your rating</legend>
                 <div className="flex gap-1">
@@ -118,7 +148,7 @@ export default function ReviewPage() {
                     >
                       <Star
                         className="w-6 h-6"
-                        style={{ color: semantic.accent.metallic }}
+                        style={{ color: semantic.accent.metallicText }}
                         fill={i <= (hover || rating) ? semantic.accent.metallic : "none"}
                       />
                     </button>
@@ -225,7 +255,7 @@ export default function ReviewPage() {
                 <li key={term} className="flex gap-3 text-sm leading-relaxed">
                   <Check
                     className="w-4 h-4 shrink-0 mt-1"
-                    style={{ color: semantic.accent.metallic }}
+                    style={{ color: semantic.accent.metallicText }}
                     aria-hidden="true"
                   />
                   <span style={{ color: semantic.text.secondary }}>{term}</span>

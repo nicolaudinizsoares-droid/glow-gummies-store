@@ -22,9 +22,24 @@ export const PRODUCT_ASSETS = {
    */
   hero: "/products/glow-hero.jpg",
   heroMobile: "/products/glow-hero-mobile.jpg",
+  /**
+   * The same two crops as WebP, offered first in the <picture>.
+   *
+   * These are plain <img> rather than next/image, deliberately -- the crops
+   * are art direction, not resolutions, and a CSS-hidden next/image still
+   * downloads both. The cost of that choice was losing the modern formats
+   * next/image would have served, and the hero is the first and heaviest
+   * image on the site: 813K of JPEG against 327K of WebP. A <source> with a
+   * type gets the saving back without giving up the art direction, and any
+   * browser that cannot read WebP simply falls through to the JPEG below.
+   */
+  heroWebp: "/products/glow-hero.webp",
+  heroMobileWebp: "/products/glow-hero-mobile.webp",
   /** Second beat of the hero's dissolve: same set, cap off, gummies spilled. */
   hero2: "/products/glow-hero-2.jpg",
   hero2Mobile: "/products/glow-hero-2-mobile.jpg",
+  hero2Webp: "/products/glow-hero-2.webp",
+  hero2MobileWebp: "/products/glow-hero-2-mobile.webp",
   /**
    * Finished product photography, for the gallery.
    *

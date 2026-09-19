@@ -197,7 +197,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               <ul className="space-y-2.5 mb-7">
                 {product.dietary_badges.map((badge) => (
                   <li key={badge} className="flex items-center gap-2.5 text-sm" style={{ color: semantic.text.secondary }}>
-                    <Check className="w-4 h-4 shrink-0" style={{ color: semantic.accent.metallic }} />
+                    <Check className="w-4 h-4 shrink-0" style={{ color: semantic.accent.metallicText }} />
                     {badge}
                   </li>
                 ))}
@@ -285,7 +285,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               { Icon: ShieldCheck, title: "Questions", copy: "Ingredients, dosage and diet.", href: "/faq", cta: "Read the FAQ" },
             ].map(({ Icon, title, copy, href, cta }) => (
               <div key={title}>
-                <Icon className="w-5 h-5 mb-3" style={{ color: semantic.accent.metallic }} />
+                <Icon className="w-5 h-5 mb-3" style={{ color: semantic.accent.metallicText }} />
                 <h3 className="text-base font-semibold mb-1.5" style={{ color: semantic.text.primary }}>{title}</h3>
                 <p className="text-sm mb-1" style={{ color: semantic.text.secondary }}>{copy}</p>
                 <Link

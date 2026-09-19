@@ -43,6 +43,9 @@ export const primitive = {
     400: "#D8B87F",
     500: "#C8A063", // the printed rule on the label
     600: "#A8834A",
+    // Dark enough to read. The label gold is 2.35:1 on the cream ground --
+    // fine as a printed rule, far below the 4.5:1 that text and icons need.
+    700: "#8F6E3C",
   },
   berry: {
     500: "#C9202F", // the gummies
@@ -80,6 +83,15 @@ export const semantic = {
     primary: primitive.apricot[500],
     secondary: primitive.blush[400],
     metallic: primitive.gold[500],
+    /**
+     * The same gold, darkened for type and icons.
+     *
+     * accent.metallic is the label's printed rule and belongs on hairlines and
+     * fills, where contrast does not apply. Used as a text colour it measures
+     * 2.35:1 on the page, which a good number of people cannot read. This
+     * passes at 4.55:1 and is near enough in hue that the two sit together.
+     */
+    metallicText: primitive.gold[700],
     product: primitive.berry[500],
   },
   border: {
@@ -87,6 +99,15 @@ export const semantic = {
     default: primitive.cream[400],
     strong: primitive.navy[800],
     metallic: primitive.gold[500],
+    /**
+     * The same gold, darkened for type and icons.
+     *
+     * accent.metallic is the label's printed rule and belongs on hairlines and
+     * fills, where contrast does not apply. Used as a text colour it measures
+     * 2.35:1 on the page, which a good number of people cannot read. This
+     * passes at 4.55:1 and is near enough in hue that the two sit together.
+     */
+    metallicText: primitive.gold[700],
   },
   state: {
     success: primitive.navy[700],

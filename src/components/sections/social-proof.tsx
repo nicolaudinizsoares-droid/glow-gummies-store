@@ -22,7 +22,7 @@ const Stars = ({ rating }: { rating: number }) => (
         key={i}
         className="w-3.5 h-3.5"
         aria-hidden="true"
-        style={{ color: semantic.accent.metallic }}
+        style={{ color: semantic.accent.metallicText }}
         fill={i <= rating ? semantic.accent.metallic : "none"}
       />
     ))}
