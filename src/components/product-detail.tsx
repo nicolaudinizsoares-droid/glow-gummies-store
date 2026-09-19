@@ -20,6 +20,7 @@ import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
+import { BUNDLE } from "@/lib/bundle";
 import { useCart } from "@/hooks/useCart";
 import { FreeShippingBadge } from "@/components/free-shipping-badge";
 import { semantic } from "@/styles/tokens";
@@ -138,9 +139,26 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                 </span>
                 <FreeShippingBadge />
               </div>
-              <p className="text-sm mb-8" style={{ color: semantic.text.muted }}>
+              <p className="text-sm mb-4" style={{ color: semantic.text.muted }}>
                 {product.flavor} · {product.serving.gummy_count} gummies ·{" "}
                 {product.serving.per_container} days
+              </p>
+
+              {/* The offer, priced from the same constants the cart totals
+                  use, so the pitch and the sum can never drift apart. */}
+              <p
+                className="inline-block text-xs mb-8 px-3 py-2"
+                style={{
+                  backgroundColor: semantic.surface.tint,
+                  color: semantic.text.secondary,
+                }}
+              >
+                <strong style={{ color: semantic.text.primary }}>
+                  {BUNDLE.minQuantity} for{" "}
+                  {formatPrice(price * BUNDLE.minQuantity - BUNDLE.amountOff)}
+                </strong>{" "}
+                — save {formatPrice(BUNDLE.amountOff)} when you buy{" "}
+                {BUNDLE.minQuantity} or more.
               </p>
 
               {/* Quantity */}

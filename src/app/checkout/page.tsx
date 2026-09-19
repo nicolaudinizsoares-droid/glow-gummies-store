@@ -22,12 +22,16 @@ import { AllergenNotice } from "@/components/allergen-notice";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/currency";
 import { calculateShipping } from "@/lib/shipping";
+import { bundleDiscount } from "@/lib/bundle";
 import { track } from "@/lib/analytics";
 import { createCheckoutUrl } from "@/lib/shopify-checkout";
 import { semantic } from "@/styles/tokens";
 
 export default function CheckoutPage() {
   const { items, total } = useCart();
+  // Shown here, charged by Shopify. src/lib/bundle.ts says how the two
+  // stay in step.
+  const discount = bundleDiscount(items, total);
   const shipping = calculateShipping(total);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +133,7 @@ export default function CheckoutPage() {
                     "Opening secure checkout…"
                   ) : (
                     <>
-                      Continue to payment — {formatPrice(total + (shipping.cost ?? 0))}
+                      Continue to payment — {formatPrice(total - discount + (shipping.cost ?? 0))}
                       <ArrowRight className="w-3.5 h-3.5" />
                     </>
                   )}
@@ -201,6 +205,14 @@ export default function CheckoutPage() {
                       {shipping.cost === null ? shipping.label : shipping.cost === 0 ? "Free" : formatPrice(shipping.cost)}
                     </dd>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between">
+                      <dt style={{ color: semantic.text.secondary }}>Bundle saving</dt>
+                      <dd className="tabular-nums" style={{ color: semantic.state.success }}>
+                        −{formatPrice(discount)}
+                      </dd>
+                    </div>
+                  )}
                   <div
                     className="flex justify-between items-baseline pt-4"
                     style={{ borderTop: `1px solid ${semantic.border.default}` }}
@@ -212,7 +224,7 @@ export default function CheckoutPage() {
                       className="font-[family-name:var(--font-playfair)] text-2xl tabular-nums"
                       style={{ color: semantic.text.primary }}
                     >
-                      {formatPrice(total + (shipping.cost ?? 0))}
+                      {formatPrice(total - discount + (shipping.cost ?? 0))}
                     </dd>
                   </div>
                 </dl>
