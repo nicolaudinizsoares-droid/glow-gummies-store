@@ -9,7 +9,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Minus, Plus, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import { Minus, Plus, Check, Truck, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/website-layouts";
@@ -23,7 +23,7 @@ import { formatPrice } from "@/lib/currency";
 import { BUNDLE } from "@/lib/bundle";
 import { useCart } from "@/hooks/useCart";
 import { FreeShippingBadge } from "@/components/free-shipping-badge";
-import { semantic } from "@/styles/tokens";
+import { primitive, semantic } from "@/styles/tokens";
 
 // Photographs, not the composited hero layers: each one already carries its
 // own background, so the frame below shows them edge to edge rather than
@@ -144,22 +144,39 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                 {product.serving.per_container} days
               </p>
 
-              {/* The offer, priced from the same constants the cart totals
-                  use, so the pitch and the sum can never drift apart. */}
-              <p
-                className="inline-block text-xs mb-8 px-3 py-2"
-                style={{
-                  backgroundColor: semantic.surface.tint,
-                  color: semantic.text.secondary,
-                }}
+              {/* The offer.
+                  
+                  Apricot on the cream page rather than the page's own tint:
+                  this is the one thing in the column asking to be noticed, and
+                  a panel the same colour as its background is not noticed. The
+                  pairing is the design system's own accent button -- navy on
+                  apricot, 7.2:1 -- so it is loud without being foreign.
+
+                  The numbers come from the same two constants the cart totals
+                  use, so the pitch and the sum cannot drift apart. */}
+              <div
+                className="flex items-center gap-3 mb-8 px-4 py-3.5"
+                style={{ backgroundColor: primitive.apricot[500] }}
               >
-                <strong style={{ color: semantic.text.primary }}>
-                  {BUNDLE.minQuantity} for{" "}
-                  {formatPrice(price * BUNDLE.minQuantity - BUNDLE.amountOff)}
-                </strong>{" "}
-                — save {formatPrice(BUNDLE.amountOff)} when you buy{" "}
-                {BUNDLE.minQuantity} or more.
-              </p>
+                <Sparkles
+                  className="w-5 h-5 shrink-0"
+                  style={{ color: semantic.text.primary }}
+                  aria-hidden="true"
+                />
+                <p className="leading-snug">
+                  <strong
+                    className="block text-base font-semibold"
+                    style={{ color: semantic.text.primary }}
+                  >
+                    {BUNDLE.minQuantity} for{" "}
+                    {formatPrice(price * BUNDLE.minQuantity - BUNDLE.amountOff)}
+                  </strong>
+                  <span className="text-xs" style={{ color: primitive.navy[700] }}>
+                    Save {formatPrice(BUNDLE.amountOff)} when you buy{" "}
+                    {BUNDLE.minQuantity} or more
+                  </span>
+                </p>
+              </div>
 
               {/* Quantity */}
               <div className="flex items-center gap-4 mb-5">
