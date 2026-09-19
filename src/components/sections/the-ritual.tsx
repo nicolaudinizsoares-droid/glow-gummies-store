@@ -38,7 +38,7 @@ export const TheRitual = () => (
           >
             <p
               className="font-[family-name:var(--font-playfair)] text-5xl mb-5"
-              style={{ color: semantic.accent.metallic }}
+              style={{ color: semantic.accent.metallicText }}
             >
               {step.n}
             </p>

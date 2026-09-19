@@ -57,7 +57,12 @@ export const Hero = () => {
           <source>, each device fetches one. */}
       <div className="hero-frame relative order-1 lg:order-2 aspect-[6/5] lg:aspect-auto lg:min-h-[calc(100vh-5rem)] overflow-hidden">
         <picture>
+          {/* Order matters: the browser takes the first source it both
+              matches and understands, so WebP is offered ahead of the JPEG
+              at each breakpoint. */}
+          <source media="(min-width: 1024px)" type="image/webp" srcSet={PRODUCT_ASSETS.heroWebp} />
           <source media="(min-width: 1024px)" srcSet={PRODUCT_ASSETS.hero} />
+          <source type="image/webp" srcSet={PRODUCT_ASSETS.heroMobileWebp} />
           <img
             src={PRODUCT_ASSETS.heroMobile}
             alt="A bottle of Glow Hair, Skin & Nails gummies on marble, beside a halved passion fruit"
@@ -66,7 +71,9 @@ export const Hero = () => {
           />
         </picture>
         <picture>
+          <source media="(min-width: 1024px)" type="image/webp" srcSet={PRODUCT_ASSETS.hero2Webp} />
           <source media="(min-width: 1024px)" srcSet={PRODUCT_ASSETS.hero2} />
+          <source type="image/webp" srcSet={PRODUCT_ASSETS.hero2MobileWebp} />
           <img
             src={PRODUCT_ASSETS.hero2Mobile}
             alt=""
