@@ -30,6 +30,7 @@ import { primitive, semantic } from "@/styles/tokens";
 // floating a cut-out on a gradient.
 const GALLERY = [
   { src: PRODUCT_ASSETS.photos.fruit, label: "Passion fruit" },
+  { src: PRODUCT_ASSETS.photos.hand, label: "In hand" },
   { src: PRODUCT_ASSETS.photos.open, label: "Open" },
   { src: PRODUCT_ASSETS.photos.skin, label: "Skin" },
 ];

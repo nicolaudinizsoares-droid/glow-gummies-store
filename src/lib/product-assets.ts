@@ -43,18 +43,21 @@ export const PRODUCT_ASSETS = {
   /**
    * Finished product photography, for the gallery.
    *
-   * The in-hand shot that used to sit here is gone. Its label reads
-   * 10.58 oz (300 g) -- a third figure again -- and the bottle is held at
-   * enough of a tilt that only four clean pixels separate the flavour line
-   * from the net weight, which is not enough label stock to rebuild from. A
-   * visible retouch would have been worse than the wrong number, so the shot
-   * came out rather than shipping a figure the product data contradicts. Unlike the layers above
-   * these keep their own backgrounds -- they are shot, not composited -- and
-   * are cropped to one 4:5 frame so the gallery does not jump between shots.
+   * The in-hand shot is back. It came out once because its label read
+   * 10.58 oz (300 g) against the 6.56 oz (186 g) in products.json, and the
+   * bottle was tilted too far to crop between the flavour line and the net
+   * weight. This is a different photograph: the label reads 6.56 oz (186 g),
+   * 60 gummies, which is what the product data says.
+   *
+   * Unlike the layers above these keep their own backgrounds -- they are shot,
+   * not composited -- and are cropped to one 4:5 frame so the gallery does not
+   * jump between shots.
    */
   photos: {
     /** Bottle with cut passion fruit and loose gummies. The default shot. */
     fruit: "/products/glow-photo-fruit.jpg",
+    /** Held in one hand against a sunlit wall. */
+    hand: "/products/glow-photo-hand.jpg",
     /** Cap off, gummies spilled onto marble. */
     open: "/products/glow-photo-open.jpg",
     /** Skin close-up. No product in frame. */
