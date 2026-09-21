@@ -143,8 +143,8 @@
       "Healthy nails"
     ],
     "pricing": {
-      "mrp": 35.0,
-      "selling_price": 35.0,
+      "mrp": 35,
+      "selling_price": 35,
       "discount_percentage": 0
     },
     "inventory": {
@@ -167,6 +167,7 @@
       "primary": "/products/glow-photo-fruit.jpg",
       "gallery": [
         "/products/glow-photo-fruit.jpg",
+        "/products/glow-photo-hand.jpg",
         "/products/glow-photo-open.jpg",
         "/products/glow-photo-skin.jpg"
       ]
