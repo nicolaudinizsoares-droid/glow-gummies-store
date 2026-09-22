@@ -9,7 +9,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Minus, Plus, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import { Minus, Plus, Check, Truck, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/website-layouts";
@@ -20,14 +20,17 @@ import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { PRODUCT_ASSETS } from "@/lib/product-assets";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/currency";
+import { BUNDLE } from "@/lib/bundle";
 import { useCart } from "@/hooks/useCart";
-import { semantic } from "@/styles/tokens";
+import { FreeShippingBadge } from "@/components/free-shipping-badge";
+import { primitive, semantic } from "@/styles/tokens";
 
 // Photographs, not the composited hero layers: each one already carries its
 // own background, so the frame below shows them edge to edge rather than
 // floating a cut-out on a gradient.
 const GALLERY = [
   { src: PRODUCT_ASSETS.photos.fruit, label: "Passion fruit" },
+  { src: PRODUCT_ASSETS.photos.hand, label: "In hand" },
   { src: PRODUCT_ASSETS.photos.open, label: "Open" },
   { src: PRODUCT_ASSETS.photos.skin, label: "Skin" },
 ];
@@ -41,7 +44,6 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
   if (!product) return null;
 
   const price = product.pricing.selling_price;
-  const saving = product.pricing.mrp - price;
 
   const add = () =>
     addToCart({
@@ -136,27 +138,46 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                 >
                   {formatPrice(price)}
                 </span>
-                <span className="text-base line-through" style={{ color: semantic.text.muted }}>
-                  {formatPrice(product.pricing.mrp)}
-                </span>
-                <span
-                  className="text-xs font-semibold uppercase tracking-[0.12em] px-2 py-1"
-                  style={{ backgroundColor: semantic.accent.primary, color: semantic.text.onAccent }}
-                >
-                  Save {formatPrice(saving)}
-                </span>
+                <FreeShippingBadge />
               </div>
-              <p className="text-sm mb-2" style={{ color: semantic.text.muted }}>
+              <p className="text-sm mb-4" style={{ color: semantic.text.muted }}>
                 {product.flavor} · {product.serving.gummy_count} gummies ·{" "}
                 {product.serving.per_container} days
               </p>
-              <p
-                className="flex items-center gap-1.5 text-sm mb-8"
-                style={{ color: semantic.text.primary }}
+
+              {/* The offer.
+                  
+                  Apricot on the cream page rather than the page's own tint:
+                  this is the one thing in the column asking to be noticed, and
+                  a panel the same colour as its background is not noticed. The
+                  pairing is the design system's own accent button -- navy on
+                  apricot, 7.2:1 -- so it is loud without being foreign.
+
+                  The numbers come from the same two constants the cart totals
+                  use, so the pitch and the sum cannot drift apart. */}
+              <div
+                className="flex items-center gap-3 mb-8 px-4 py-3.5"
+                style={{ backgroundColor: primitive.apricot[500] }}
               >
-                <Truck className="w-4 h-4" style={{ color: semantic.accent.metallic }} />
-                Free shipping
-              </p>
+                <Sparkles
+                  className="w-5 h-5 shrink-0"
+                  style={{ color: semantic.text.primary }}
+                  aria-hidden="true"
+                />
+                <p className="leading-snug">
+                  <strong
+                    className="block text-base font-semibold"
+                    style={{ color: semantic.text.primary }}
+                  >
+                    {BUNDLE.minQuantity} for{" "}
+                    {formatPrice(price * BUNDLE.minQuantity - BUNDLE.amountOff)}
+                  </strong>
+                  <span className="text-xs" style={{ color: primitive.navy[700] }}>
+                    Save {formatPrice(BUNDLE.amountOff)} when you buy{" "}
+                    {BUNDLE.minQuantity} or more
+                  </span>
+                </p>
+              </div>
 
               {/* Quantity */}
               <div className="flex items-center gap-4 mb-5">
@@ -212,7 +233,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               <ul className="space-y-2.5 mb-7">
                 {product.dietary_badges.map((badge) => (
                   <li key={badge} className="flex items-center gap-2.5 text-sm" style={{ color: semantic.text.secondary }}>
-                    <Check className="w-4 h-4 shrink-0" style={{ color: semantic.accent.metallic }} />
+                    <Check className="w-4 h-4 shrink-0" style={{ color: semantic.accent.metallicText }} />
                     {badge}
                   </li>
                 ))}
@@ -313,7 +334,7 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               { Icon: ShieldCheck, title: "Questions", copy: "Ingredients, dosage and diet.", href: "/faq", cta: "Read the FAQ" },
             ].map(({ Icon, title, copy, href, cta }) => (
               <div key={title}>
-                <Icon className="w-5 h-5 mb-3" style={{ color: semantic.accent.metallic }} />
+                <Icon className="w-5 h-5 mb-3" style={{ color: semantic.accent.metallicText }} />
                 <h3 className="text-base font-semibold mb-1.5" style={{ color: semantic.text.primary }}>{title}</h3>
                 <p className="text-sm mb-1" style={{ color: semantic.text.secondary }}>{copy}</p>
                 <Link

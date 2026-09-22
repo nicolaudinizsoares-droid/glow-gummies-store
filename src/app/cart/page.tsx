@@ -12,10 +12,14 @@ import { ViewCartTracker } from "@/components/analytics-events";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/currency";
 import { calculateShipping } from "@/lib/shipping";
+import { bundleDiscount } from "@/lib/bundle";
 import { semantic } from "@/styles/tokens";
 
 export default function CartPage() {
   const { items, total, updateQuantity, removeFromCart } = useCart();
+  // Shown here, charged by Shopify. src/lib/bundle.ts says how the two
+  // stay in step.
+  const discount = bundleDiscount(items, total);
   const shipping = calculateShipping(total);
 
   return (
@@ -172,6 +176,14 @@ export default function CartPage() {
                           : formatPrice(shipping.cost)}
                     </dd>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between">
+                      <dt style={{ color: semantic.text.secondary }}>Bundle saving</dt>
+                      <dd className="tabular-nums" style={{ color: semantic.state.success }}>
+                        −{formatPrice(discount)}
+                      </dd>
+                    </div>
+                  )}
                   <div
                     className="flex justify-between items-baseline pt-4 mt-1"
                     style={{ borderTop: `1px solid ${semantic.border.default}` }}
@@ -183,7 +195,7 @@ export default function CartPage() {
                       className="font-[family-name:var(--font-playfair)] text-2xl tabular-nums"
                       style={{ color: semantic.text.primary }}
                     >
-                      {formatPrice(total + (shipping.cost ?? 0))}
+                      {formatPrice(total - discount + (shipping.cost ?? 0))}
                     </dd>
                   </div>
                 </dl>

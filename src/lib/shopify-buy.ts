@@ -1,0 +1,56 @@
+// Shopify storefront configuration.
+//
+// Three public values. The storefront access token is public by design: unlike
+// an Admin API token it can only read published products and open a checkout,
+// which is why Shopify prints it into a snippet meant to be pasted into a web
+// page. All of it is in the repository rather than in environment variables
+// because these values must be identical in every environment, and a variable
+// that is missing or misnamed fails silently -- a failure mode this project
+// has already paid for once.
+//
+// NOTE: a Shopify checkout accepts orders only when the store is on a paid
+// plan with password protection turned off. Until then a cart can be built and
+// the customer sent to Shopify, but the sale cannot complete.
+
+export const SHOPIFY_BUY = {
+  // The store's primary domain, not its myshopify.com address. The SDK builds
+  // checkout URLs against whatever is given here, so pointing it at the
+  // myshopify address sends customers to a checkout branded
+  // rzdvw9-uk.myshopify.com however the Shopify dashboard is configured.
+  domain: "shop.glowgummies.org",
+  storefrontAccessToken: "5509ec95f0ce8c5d1c01993764bf7e72",
+  /**
+   * Shopify product id for Glow Gummies, used by the /buy widget and as the
+   * fast path for checkout.
+   *
+   * A numeric id does not survive the product being recreated -- deleting and
+   * re-adding it, or letting an integration republish it, mints a new one and
+   * leaves this pointing at nothing. Checkout therefore falls back to matching
+   * on SKU, which is stable across all of that. Keep this current anyway: the
+   * fallback costs an extra request.
+   */
+  productId: "10607141716149",
+} as const;
+
+/**
+ * This site's product ids, as they appear in products.json, mapped to the
+ * Shopify products they are sold as.
+ *
+ * Explicit rather than "send everything to the one product we know about": a
+ * second product added to products.json without its own entry must fail
+ * visibly rather than quietly sell the gummies under another name.
+ */
+export const SHOPIFY_PRODUCT_BY_LOCAL_ID: Record<string, string> = {
+  "GLW-HSN-001": SHOPIFY_BUY.productId,
+};
+
+/**
+ * SKU per local product, used to find the Shopify variant when the id above no
+ * longer resolves. Must match the SKU set on the variant in Shopify.
+ */
+export const SKU_BY_LOCAL_ID: Record<string, string> = {
+  "GLW-HSN-001": "GLOW-HSN-PF-60",
+};
+
+/** Shopify's own money format token, decoded from the snippet's %24%7B%7B... */
+export const MONEY_FORMAT = "${{amount}}";

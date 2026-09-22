@@ -1,8 +1,19 @@
+// Checkout: review the order here, pay on Shopify.
+//
+// The cart, the summary and the styling are this site's. Only the payment
+// screen is Shopify's, reached by building a checkout from the local cart and
+// sending the customer to it.
+//
+// The delivery form that used to live here is gone. Shopify's checkout asks
+// for the address on the next page, so keeping it would mean typing everything
+// twice and would leave this site holding personal data it has no reason to
+// hold.
+
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { Lock, AlertCircle } from "lucide-react";
+import { Lock, AlertCircle, ArrowRight } from "lucide-react";
 
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/website-layouts";
@@ -11,49 +22,41 @@ import { AllergenNotice } from "@/components/allergen-notice";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/currency";
 import { calculateShipping } from "@/lib/shipping";
+import { bundleDiscount } from "@/lib/bundle";
 import { track } from "@/lib/analytics";
-import {
-  EMPTY_DETAILS,
-  PROCESSOR,
-  fieldLabel,
-  validate,
-  type CheckoutDetails,
-  type CheckoutErrors,
-} from "@/lib/checkout";
+import { createCheckoutUrl } from "@/lib/shopify-checkout";
 import { semantic } from "@/styles/tokens";
-
-const FIELDS: (keyof CheckoutDetails)[][] = [
-  ["email"],
-  ["firstName", "lastName"],
-  ["address1"],
-  ["address2"],
-  ["city", "region"],
-  ["postcode", "country"],
-];
 
 export default function CheckoutPage() {
   const { items, total } = useCart();
+  // Shown here, charged by Shopify. src/lib/bundle.ts says how the two
+  // stay in step.
+  const discount = bundleDiscount(items, total);
   const shipping = calculateShipping(total);
-  const [details, setDetails] = useState<CheckoutDetails>(EMPTY_DETAILS);
-  const [errors, setErrors] = useState<CheckoutErrors>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const set = (field: keyof CheckoutDetails, value: string) => {
-    setDetails((d) => ({ ...d, [field]: value }));
-    if (errors[field]) setErrors((e) => ({ ...e, [field]: undefined }));
-  };
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const found = validate(details);
-    setErrors(found);
-    if (Object.keys(found).length > 0) {
-      const first = document.querySelector<HTMLElement>("[aria-invalid='true']");
-      first?.focus();
-      return;
-    }
+  const onContinue = async () => {
+    setBusy(true);
+    setError(null);
     track({ name: "begin_checkout", value: total, items: items.length });
-    setSubmitted(true);
+
+    try {
+      const url = await createCheckoutUrl(
+        items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+      );
+      // Full navigation rather than a router push: the destination is
+      // Shopify's, not this application's.
+      window.location.assign(url);
+    } catch (err) {
+      // The detail names Shopify objects and ids; the customer gets a sentence
+      // and a way to try again, and the console keeps the rest.
+      console.error("[checkout] could not open Shopify checkout", err);
+      setError(
+        "We could not open the secure checkout. Nothing has been charged — please try again in a moment.",
+      );
+      setBusy(false);
+    }
   };
 
   return (
@@ -81,117 +84,59 @@ export default function CheckoutPage() {
             </div>
           ) : (
             <div className="grid lg:grid-cols-[1fr_340px] gap-10 lg:gap-16 items-start">
-              <form onSubmit={onSubmit} noValidate>
-                <h2 className="text-xl mb-6" style={{ color: semantic.text.primary }}>
-                  Delivery details
+              <div>
+                <h2 className="text-xl mb-4" style={{ color: semantic.text.primary }}>
+                  Secure checkout
                 </h2>
 
-                {FIELDS.map((row) => (
-                  <div key={row.join()} className="grid sm:grid-cols-2 gap-4 mb-4">
-                    {row.map((field) => {
-                      const invalid = Boolean(errors[field]);
-                      return (
-                        <div key={field} className={row.length === 1 ? "sm:col-span-2" : ""}>
-                          <label
-                            htmlFor={field}
-                            className="block text-xs uppercase tracking-[0.12em] mb-2"
-                            style={{ color: semantic.text.muted }}
-                          >
-                            {fieldLabel(field)}
-                          </label>
-                          <input
-                            id={field}
-                            name={field}
-                            type={field === "email" ? "email" : "text"}
-                            autoComplete={
-                              { email: "email", firstName: "given-name", lastName: "family-name",
-                                address1: "address-line1", address2: "address-line2",
-                                city: "address-level2", region: "address-level1",
-                                postcode: "postal-code", country: "country-name" }[field]
-                            }
-                            value={details[field]}
-                            onChange={(e) => set(field, e.target.value)}
-                            aria-invalid={invalid}
-                            aria-describedby={invalid ? `${field}-error` : undefined}
-                            className="w-full px-3.5 py-3 text-sm bg-transparent"
-                            style={{
-                              border: `1px solid ${invalid ? semantic.state.error : semantic.border.default}`,
-                              color: semantic.text.primary,
-                            }}
-                          />
-                          {invalid && (
-                            <p
-                              id={`${field}-error`}
-                              className="text-xs mt-1.5"
-                              style={{ color: semantic.state.error }}
-                            >
-                              {errors[field]}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
+                <p className="text-sm leading-relaxed mb-6 max-w-prose" style={{ color: semantic.text.secondary }}>
+                  Your order is ready. The next step opens our secure checkout,
+                  where you will enter your delivery address and payment
+                  details. Your card is handled entirely by Shopify — it never
+                  touches this site.
+                </p>
 
-                <h2 className="text-xl mt-10 mb-4" style={{ color: semantic.text.primary }}>
-                  Payment
-                </h2>
+                <ol className="text-sm leading-relaxed mb-8 space-y-2" style={{ color: semantic.text.secondary }}>
+                  <li>1. Enter your delivery address</li>
+                  <li>2. Pay by card</li>
+                  <li>3. Get your confirmation email</li>
+                </ol>
 
-                {/* No card fields. See src/lib/checkout.ts for why. */}
-                <div
-                  className="flex gap-3 p-5"
-                  style={{
-                    backgroundColor: semantic.surface.tint,
-                    border: `1px solid ${semantic.border.default}`,
-                  }}
-                >
-                  <AlertCircle
-                    className="w-4 h-4 shrink-0 mt-0.5"
-                    style={{ color: semantic.accent.secondary }}
-                    aria-hidden="true"
-                  />
-                  <div className="text-sm leading-relaxed" style={{ color: semantic.text.secondary }}>
-                    {PROCESSOR.connected ? (
-                      <>Payment is handled securely by {PROCESSOR.name}.</>
-                    ) : (
-                      <>
-                        <strong style={{ color: semantic.text.primary }}>
-                          No payment processor is connected yet.
-                        </strong>{" "}
-                        This store cannot take payment, so no card details are
-                        collected here. Orders placed now are not charged and
-                        will not ship.
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {submitted && (
+                {error && (
                   <div
-                    className="mt-5 p-5 text-sm leading-relaxed"
+                    className="flex gap-3 p-5 mb-6"
                     style={{
-                      backgroundColor: semantic.surface.raised,
-                      border: `1px solid ${semantic.border.default}`,
-                      color: semantic.text.secondary,
+                      backgroundColor: semantic.surface.tint,
+                      border: `1px solid ${semantic.state.error}`,
                     }}
-                    role="status"
+                    role="alert"
                   >
-                    <strong style={{ color: semantic.text.primary }}>
-                      Details captured.
-                    </strong>{" "}
-                    This is where the order would be handed to a payment
-                    processor. Nothing has been charged and no order has been
-                    placed.
+                    <AlertCircle
+                      className="w-4 h-4 shrink-0 mt-0.5"
+                      style={{ color: semantic.state.error }}
+                      aria-hidden="true"
+                    />
+                    <div className="text-sm leading-relaxed" style={{ color: semantic.text.secondary }}>
+                      {error}
+                    </div>
                   </div>
                 )}
 
                 <button
-                  type="submit"
-                  className="w-full mt-6 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
+                  type="button"
+                  onClick={onContinue}
+                  disabled={busy}
+                  className="w-full flex items-center justify-center gap-2 py-4 text-[0.75rem] tracking-[0.18em] uppercase font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
                   style={{ backgroundColor: semantic.text.primary, color: semantic.text.inverse }}
                 >
-                  Continue to payment
+                  {busy ? (
+                    "Opening secure checkout…"
+                  ) : (
+                    <>
+                      Continue to payment — {formatPrice(total - discount + (shipping.cost ?? 0))}
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  )}
                 </button>
 
                 <p
@@ -201,7 +146,7 @@ export default function CheckoutPage() {
                   <Lock className="w-3 h-3" />
                   Card details are never handled by this site.
                 </p>
-              </form>
+              </div>
 
               <aside
                 className="p-7 lg:sticky lg:top-28"
@@ -240,10 +185,7 @@ export default function CheckoutPage() {
                           Qty {item.quantity}
                         </p>
                       </div>
-                      <span
-                        className="text-sm tabular-nums"
-                        style={{ color: semantic.text.primary }}
-                      >
+                      <span className="text-sm tabular-nums" style={{ color: semantic.text.primary }}>
                         {formatPrice(item.price * item.quantity)}
                       </span>
                     </li>
@@ -263,6 +205,14 @@ export default function CheckoutPage() {
                       {shipping.cost === null ? shipping.label : shipping.cost === 0 ? "Free" : formatPrice(shipping.cost)}
                     </dd>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between">
+                      <dt style={{ color: semantic.text.secondary }}>Bundle saving</dt>
+                      <dd className="tabular-nums" style={{ color: semantic.state.success }}>
+                        −{formatPrice(discount)}
+                      </dd>
+                    </div>
+                  )}
                   <div
                     className="flex justify-between items-baseline pt-4"
                     style={{ borderTop: `1px solid ${semantic.border.default}` }}
@@ -274,10 +224,17 @@ export default function CheckoutPage() {
                       className="font-[family-name:var(--font-playfair)] text-2xl tabular-nums"
                       style={{ color: semantic.text.primary }}
                     >
-                      {formatPrice(total + (shipping.cost ?? 0))}
+                      {formatPrice(total - discount + (shipping.cost ?? 0))}
                     </dd>
                   </div>
                 </dl>
+
+                {/* The final figures are Shopify's: it applies the tax and
+                    shipping rules configured there, which this site does not
+                    know. */}
+                <p className="text-xs mt-4" style={{ color: semantic.text.muted }}>
+                  Taxes and any shipping are calculated at checkout.
+                </p>
 
                 <AllergenNotice className="mt-6" />
               </aside>

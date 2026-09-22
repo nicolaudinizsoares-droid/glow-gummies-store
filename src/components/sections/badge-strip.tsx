@@ -30,7 +30,7 @@ export const BadgeStrip = () => (
           <li key={badge} className="flex items-center justify-center gap-2.5">
             <Icon
               className="w-4 h-4 shrink-0"
-              style={{ color: semantic.accent.metallic }}
+              style={{ color: semantic.accent.metallicText }}
               aria-hidden="true"
             />
             <span

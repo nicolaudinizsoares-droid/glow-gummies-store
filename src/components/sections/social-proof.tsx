@@ -1,13 +1,18 @@
 // Section 08 - Social proof.
 //
-// Reviews come from src/data/reviews.json, which is empty. Rather than
-// fabricate any, the section renders an honest empty state until real ones
-// exist. A development-only fixture can be switched on to preview the layout;
-// see src/lib/reviews.ts.
+// Reviews come from src/data/reviews.json, and there are none yet. The section
+// renders nothing at all until there are: an empty reviews block advertises
+// that nobody has bought, which is worse than no block. It reappears on its
+// own the moment a review lands, with no code change.
+//
+// Reviews collected through /review came with a discount attached and carry
+// incentivized: true. Those are labelled. That label is required, not a
+// courtesy -- an undisclosed incentive is what turns a lawful offer into an
+// actionable one.
 
 import { Star } from "lucide-react";
 import { Reveal } from "@/components/reveal";
-import { reviews, reviewSummary, usingSampleReviews } from "@/lib/reviews";
+import { reviews, reviewSummary } from "@/lib/reviews";
 import { semantic } from "@/styles/tokens";
 
 const Stars = ({ rating }: { rating: number }) => (
@@ -17,7 +22,7 @@ const Stars = ({ rating }: { rating: number }) => (
         key={i}
         className="w-3.5 h-3.5"
         aria-hidden="true"
-        style={{ color: semantic.accent.metallic }}
+        style={{ color: semantic.accent.metallicText }}
         fill={i <= rating ? semantic.accent.metallic : "none"}
       />
     ))}
@@ -26,6 +31,9 @@ const Stars = ({ rating }: { rating: number }) => (
 
 export const SocialProof = () => {
   const summary = reviewSummary();
+
+  // Nothing to show, so show nothing.
+  if (summary.count === 0) return null;
 
   return (
     <section
@@ -43,68 +51,50 @@ export const SocialProof = () => {
             className="text-[clamp(2rem,4vw,3.25rem)]"
             style={{ color: semantic.text.primary }}
           >
-            {summary.count > 0 ? "What people say" : "No reviews yet"}
+            What people say
           </h2>
-          {summary.count > 0 && (
-            <div data-reveal-item className="flex items-center justify-center gap-3 mt-5">
-              <Stars rating={Math.round(summary.average)} />
-              <span className="text-sm" style={{ color: semantic.text.secondary }}>
-                {summary.average} · {summary.count} review
-                {summary.count === 1 ? "" : "s"}
-              </span>
-            </div>
-          )}
+          <div data-reveal-item className="flex items-center justify-center gap-3 mt-5">
+            <Stars rating={Math.round(summary.average)} />
+            <span className="text-sm" style={{ color: semantic.text.secondary }}>
+              {summary.average} · {summary.count} review
+              {summary.count === 1 ? "" : "s"}
+            </span>
+          </div>
         </Reveal>
 
-        {usingSampleReviews && (
-          <p
-            className="text-xs text-center mb-8 px-4 py-2 max-w-lg mx-auto"
-            style={{
-              backgroundColor: semantic.accent.secondary,
-              color: semantic.text.inverse,
-            }}
-          >
-            Development preview: placeholder review data, not real customers.
-          </p>
-        )}
-
-        {summary.count === 0 ? (
-          <Reveal className="max-w-lg mx-auto text-center">
-            <p className="text-lg leading-relaxed mb-3" style={{ color: semantic.text.secondary }}>
-              Glow is new, so there is nothing here yet. When customers start
-              leaving reviews, they will appear on this page exactly as written.
-            </p>
-            <p className="text-sm" style={{ color: semantic.text.muted }}>
-              We do not write our own.
-            </p>
-          </Reveal>
-        ) : (
-          <Reveal className="grid md:grid-cols-3 gap-6" stagger distance={32}>
-            {reviews.map((review) => (
-              <article
-                key={review.id}
-                data-reveal-item
-                className="p-7"
-                style={{
-                  backgroundColor: semantic.surface.raised,
-                  border: `1px solid ${semantic.border.subtle}`,
-                }}
-              >
-                <Stars rating={review.rating} />
-                <h3 className="text-base font-semibold mt-4 mb-2" style={{ color: semantic.text.primary }}>
-                  {review.title}
-                </h3>
-                <p className="text-sm leading-relaxed mb-5" style={{ color: semantic.text.secondary }}>
-                  {review.body}
+        <Reveal className="grid md:grid-cols-3 gap-6" stagger distance={32}>
+          {reviews.map((review) => (
+            <article
+              key={review.id}
+              data-reveal-item
+              className="p-7"
+              style={{
+                backgroundColor: semantic.surface.raised,
+                border: `1px solid ${semantic.border.subtle}`,
+              }}
+            >
+              <Stars rating={review.rating} />
+              <h3 className="text-base font-semibold mt-4 mb-2" style={{ color: semantic.text.primary }}>
+                {review.title}
+              </h3>
+              <p className="text-sm leading-relaxed mb-5" style={{ color: semantic.text.secondary }}>
+                {review.body}
+              </p>
+              <p className="text-xs" style={{ color: semantic.text.muted }}>
+                {review.author}
+                {review.verified && " · Verified purchase"}
+              </p>
+              {review.incentivized && (
+                <p
+                  className="text-xs mt-2"
+                  style={{ color: semantic.text.secondary }}
+                >
+                  Written for a discount on a future order.
                 </p>
-                <p className="text-xs" style={{ color: semantic.text.muted }}>
-                  {review.author}
-                  {review.verified && " · Verified purchase"}
-                </p>
-              </article>
-            ))}
-          </Reveal>
-        )}
+              )}
+            </article>
+        ))}
+      </Reveal>
       </div>
     </section>
   );

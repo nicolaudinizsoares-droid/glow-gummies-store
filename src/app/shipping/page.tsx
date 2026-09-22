@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageShell, Section, NeedsReview } from "@/components/page-shell";
+import { PageShell, Section } from "@/components/page-shell";
 
 export const metadata: Metadata = {
   title: "Shipping | Glow",
@@ -24,17 +24,11 @@ export default function ShippingPage() {
       </Section>
 
       <Section heading="Delivery times">
-        <NeedsReview>
-          Carrier and delivery windows have not been supplied. Customers ask
-          this before they buy, so it is worth filling in.
-        </NeedsReview>
-      </Section>
-
-      <Section heading="Where we ship">
-        <NeedsReview>
-          Confirm which countries or states Glow ships to. Dietary supplements
-          face import restrictions in some markets.
-        </NeedsReview>
+        <p>
+          Orders arrive in 3 to 8 business days after they are dispatched.
+          Business days do not include weekends or public holidays, so an order
+          placed on a Friday is usually with you the following week.
+        </p>
       </Section>
     </PageShell>
   );

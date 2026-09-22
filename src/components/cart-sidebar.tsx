@@ -11,10 +11,14 @@ import { ProductImage } from "@/components/product-image";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/currency";
 import { calculateShipping } from "@/lib/shipping";
+import { bundleDiscount } from "@/lib/bundle";
 import { semantic } from "@/styles/tokens";
 
 export const CartSidebar = () => {
   const { items, total, isOpen, closeCart, updateQuantity, removeFromCart } = useCart();
+  // Shown here, charged by Shopify. src/lib/bundle.ts says how the two
+  // stay in step.
+  const discount = bundleDiscount(items, total);
   const shipping = calculateShipping(total);
 
   useEffect(() => {
@@ -193,6 +197,14 @@ export const CartSidebar = () => {
                             : formatPrice(shipping.cost)}
                       </dd>
                     </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between">
+                        <dt style={{ color: semantic.text.secondary }}>Bundle saving</dt>
+                        <dd className="tabular-nums" style={{ color: semantic.state.success }}>
+                          −{formatPrice(discount)}
+                        </dd>
+                      </div>
+                    )}
                     <div
                       className="flex justify-between pt-3 text-base"
                       style={{ borderTop: `1px solid ${semantic.border.subtle}` }}
@@ -204,7 +216,7 @@ export const CartSidebar = () => {
                         className="font-[family-name:var(--font-playfair)] text-xl tabular-nums"
                         style={{ color: semantic.text.primary }}
                       >
-                        {formatPrice(total + (shipping.cost ?? 0))}
+                        {formatPrice(total - discount + (shipping.cost ?? 0))}
                       </dd>
                     </div>
                   </dl>

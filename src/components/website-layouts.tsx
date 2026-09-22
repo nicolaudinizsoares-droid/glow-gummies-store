@@ -3,7 +3,9 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Facebook } from "lucide-react";
+import { Facebook } from "lucide-react";
+
+import { SOCIAL } from "@/lib/social";
 
 import { GlowLogo } from "@/components/glow-logo";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
@@ -55,20 +57,23 @@ export const Footer = () => (
           >
             Daily beauty gummies for hair, skin and nails.
           </p>
+          {/* One account, one button. Both of these used to be href="#" --
+              present, clickable, and going nowhere, which is worse than absent:
+              a visitor who clicks and lands on the same page reads it as a
+              broken site rather than an unfinished one. Instagram comes back
+              when there is an Instagram to point it at. */}
           <div className="flex gap-2 mt-5">
-            {[
-              { Icon: Instagram, label: "Instagram" },
-              { Icon: Facebook, label: "Facebook" },
-            ].map(({ Icon, label }) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={`Glow on ${label}`}
-                className="p-2.5 rounded-full transition-colors hover:bg-black/5"
-              >
-                <Icon className="w-4 h-4" style={{ color: semantic.text.primary }} />
-              </a>
-            ))}
+            <a
+              href={SOCIAL.facebook}
+              aria-label="Glow on Facebook"
+              // Social links leave the site, so they open alongside it rather
+              // than in place of a cart someone is halfway through filling.
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2.5 rounded-full transition-colors hover:bg-black/5"
+            >
+              <Facebook className="w-4 h-4" style={{ color: semantic.text.primary }} />
+            </a>
           </div>
         </div>
 
