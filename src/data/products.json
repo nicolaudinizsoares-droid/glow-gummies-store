@@ -135,7 +135,17 @@
     "variants": [],
     "ingredients": {
       "hero_ingredients": [],
-      "other_ingredients": []
+      "other_ingredients": [
+        "Glucose syrup",
+        "Sugar",
+        "Glucose",
+        "Pectin",
+        "Citric acid",
+        "Sodium citrate",
+        "Passion fruit flavor",
+        "Vegetable oil (contains carnauba wax)",
+        "Purple carrot juice concentrate"
+      ]
     },
     "concerns_addressed": [
       "Stronger hair",
@@ -189,7 +199,7 @@
     },
     "supplement_facts_footnotes": [
       "% Daily Value (%DV) based on a 2,000 calorie diet.",
-      "Daily Value (DV) not established."
+      "Daily Value not established."
     ],
     "allergens": [
       "Fish (Tilapia)",
