@@ -19,6 +19,13 @@ export default function IngredientsPage() {
       intro="Everything in the bottle, printed exactly as it appears on the label."
     >
       <Section heading="Supplement Facts">
+        {/* The panel's own header line. The product page carries it above the
+            table; without it this page prints the rows but not what a serving
+            is, which is the number every value below is per. */}
+        <p className="text-sm font-medium">
+          Serving size {product.serving.size} · {product.serving.per_container}{" "}
+          servings per container
+        </p>
         {product.supplement_facts.length > 0 ? (
           <table className="w-full text-sm border-collapse">
             <thead>
@@ -53,6 +60,17 @@ export default function IngredientsPage() {
               </li>
             ))}
           </ul>
+        )}
+      </Section>
+
+      <Section heading="Other Ingredients">
+        {product.ingredients.other_ingredients.length > 0 ? (
+          <p>{product.ingredients.other_ingredients.join(", ")}.</p>
+        ) : (
+          <NeedsReview>
+            The inactive ingredients have not been transcribed from the label
+            yet. Nothing is guessed here on purpose.
+          </NeedsReview>
         )}
       </Section>
 

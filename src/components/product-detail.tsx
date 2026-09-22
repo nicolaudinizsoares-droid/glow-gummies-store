@@ -284,6 +284,19 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
                 <li key={note}>{"*".repeat(i + 2)} {note}</li>
               ))}
             </ul>
+            {product.ingredients.other_ingredients.length > 0 && (
+              <div className="mt-6">
+                <h3
+                  className="text-xs uppercase tracking-[0.14em] font-semibold mb-1.5"
+                  style={{ color: semantic.text.primary }}
+                >
+                  Other Ingredients
+                </h3>
+                <p className="text-sm" style={{ color: semantic.text.secondary }}>
+                  {product.ingredients.other_ingredients.join(", ")}.
+                </p>
+              </div>
+            )}
             <AllergenNotice className="mt-6" />
             <div className="mt-8">
               <LegalDisclaimer />
