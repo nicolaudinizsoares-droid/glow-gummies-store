@@ -35,26 +35,30 @@ twice.
 
 ## The net weight on the photographed label
 
-The photography was shot against pre-production packaging. Two shots read
-`10.1 oz (286 g)` and the in-hand shot read `10.58 oz (300 g)`; the product is
-`6.56 oz (186 g)`. Net weight is a required declaration, so a bottle on the
-page cannot show a figure the page contradicts.
+**Historical. Nothing in `public/products/` is retouched any more.** The
+photography has since been re-shot against corrected packaging, and every
+bottle on the site now reads `6.56 oz (186 g)` in camera.
 
-`relabel.mjs` rebuilds the label stock under that line and typesets the
-correct figure back, working on the full-resolution originals so one pass
-propagates through every crop. Run it before the crop pipeline:
+The first shoot used pre-production packaging: two shots read
+`10.1 oz (286 g)` and the in-hand shot read `10.58 oz (300 g)`, against the
+`6.56 oz (186 g)` in `products.json`. Net weight is a required declaration, so
+a bottle on the page cannot show a figure the page contradicts, and
+`relabel.mjs` was written to rebuild the label stock under that line and
+typeset the correct figure back:
 
     node relabel.mjs relabel-jobs.json <dir-with-originals>
 
-It does not work on every shot, and the failure is visible rather than silent.
-The in-hand shot has only four clean pixel rows between the flavour line and
-the net weight -- not enough label to rebuild from -- so it was dropped from
-the site instead of retouched badly. Measure the gap before assuming a shot is
-workable; `squeeze` values that disagree across a set mean the geometry is off.
+It is kept because the problem recurs whenever artwork changes faster than
+photography, and because its limits are worth knowing before reaching for it:
 
-**This corrects imagery, not packaging.** If bottles are shipping with the old
-declaration printed on them, that is a labelling problem and new labels are
-the fix.
+- It does not work on every shot, and the failure is visible rather than
+  silent. The first in-hand shot had four clean pixel rows between the flavour
+  line and the net weight -- not enough label to rebuild from -- so that shot
+  was dropped from the site rather than retouched badly. Measure the gap
+  before assuming a shot is workable.
+- `squeeze` values that disagree across a set mean the geometry is wrong.
+- **It corrects imagery, not packaging.** Re-shooting, as happened here, is
+  always the better answer when it is available.
 
 ## What photography has already replaced
 
