@@ -281,20 +281,20 @@ export const ProductDetail = ({ slug }: { slug: string }) => {
               Serving size {product.serving.size} · {product.serving.per_container} servings per container
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse min-w-[420px]">
+              <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr style={{ borderBottom: `2px solid ${semantic.text.primary}` }}>
-                    <th className="text-left py-2 font-semibold">Amount per serving</th>
-                    <th className="text-right py-2" />
-                    <th className="text-right py-2 font-semibold">%DV</th>
+                    <th className="text-left py-2 font-semibold">Nutrient</th>
+                    <th className="text-right py-2 font-semibold">Amount</th>
+                    <th className="text-right py-2 pl-3 font-semibold">%DV</th>
                   </tr>
                 </thead>
                 <tbody>
                   {product.supplement_facts.map((row) => (
                     <tr key={row.name} style={{ borderBottom: `1px solid ${semantic.border.subtle}` }}>
-                      <td className="py-2" style={{ color: semantic.text.primary }}>{row.name}</td>
+                      <td className="py-2 [overflow-wrap:anywhere] min-[360px]:[overflow-wrap:break-word]" style={{ color: semantic.text.primary }}>{row.name}</td>
                       <td className="py-2 text-right tabular-nums" style={{ color: semantic.text.secondary }}>{row.amount}</td>
-                      <td className="py-2 text-right tabular-nums" style={{ color: semantic.text.secondary }}>{row.daily_value ?? "***"}</td>
+                      <td className="py-2 pl-3 text-right tabular-nums whitespace-nowrap" style={{ color: semantic.text.secondary }}>{row.daily_value ?? "***"}</td>
                     </tr>
                   ))}
                 </tbody>
